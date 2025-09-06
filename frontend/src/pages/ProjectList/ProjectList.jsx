@@ -24,9 +24,6 @@ import {
   Sun, Moon,
   Upload
 } from 'lucide-react';
-import { Link } from 'react-router-dom';
-
-
 
 const ProjectList = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -293,11 +290,10 @@ const ProjectList = () => {
     return (
       <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div
-          className={`bg-white rounded-lg shadow-xl ${
-            modalMaximized || isMobile 
-              ? 'w-full h-full' 
+          className={`bg-white rounded-lg shadow-xl ${modalMaximized || isMobile
+              ? 'w-full h-full'
               : 'w-full max-w-4xl max-h-[90vh]'
-          } overflow-hidden`}
+            } overflow-hidden`}
         >
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <div className="flex items-center gap-2">
@@ -359,9 +355,8 @@ const ProjectList = () => {
                         key={tag}
                         type="button"
                         onClick={() => handleTagToggle(tag)}
-                        className={`px-3 py-1 rounded-full border text-sm ${
-                          active ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300'
-                        }`}
+                        className={`px-3 py-1 rounded-full border text-sm ${active ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300'
+                          }`}
                       >
                         {tag}
                       </button>
@@ -531,11 +526,10 @@ const ProjectList = () => {
 
     return (
       <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
-        <div className={`bg-white rounded-lg shadow-xl ${
-          modalMaximized || isMobile 
-            ? 'w-full h-full' 
+        <div className={`bg-white rounded-lg shadow-xl ${modalMaximized || isMobile
+            ? 'w-full h-full'
             : 'w-full max-w-2xl max-h-[90vh]'
-        } overflow-hidden`}>
+          } overflow-hidden`}>
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 bg-blue-500 rounded-sm flex items-center justify-center">
@@ -700,11 +694,10 @@ const ProjectList = () => {
       )}
 
       {/* Sidebar */}
-      <div className={`${
-        isMobile 
+      <div className={`${isMobile
           ? `fixed left-0 top-0 h-full z-50 transform transition-transform ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} w-64`
           : sidebarCollapsed ? 'w-16' : 'w-64'
-      } bg-white border-r transition-all duration-300 flex flex-col border-gray-200`}>
+        } bg-white border-r transition-all duration-300 flex flex-col border-gray-200`}>
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           {(!sidebarCollapsed || isMobile) && (
             <div className="flex items-center gap-2">
@@ -732,7 +725,7 @@ const ProjectList = () => {
               {(!sidebarCollapsed || isMobile) && <span className="text-sm">For you</span>}
             </div>
 
-            {/* <button
+            <button
               className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded w-full"
               onClick={() => toggleSection('recent')}
             >
@@ -775,7 +768,7 @@ const ProjectList = () => {
 
           {/* Sidebar Footer */}
           <div className="mt-auto space-y-1">
-            {/* <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded">
+            <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded">
               <Filter className="w-4 h-4" />
               {(!sidebarCollapsed || isMobile) && <span className="text-sm">Filters</span>}
             </div>
@@ -801,7 +794,7 @@ const ProjectList = () => {
               {/* Top row - Menu and Profile */}
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <button 
+                  <button
                     className="p-1 hover:bg-gray-100 rounded"
                     onClick={() => setMobileMenuOpen(true)}
                   >
@@ -833,7 +826,7 @@ const ProjectList = () => {
                       </span>
                     </button>
                   </div>
-                  
+
                   {/* Profile Menu */}
                   <div className="relative">
                     <button
@@ -964,7 +957,7 @@ const ProjectList = () => {
                     </span>
                   </button>
                 </div>
-                
+
                 {/* Profile Menu */}
                 <div className="relative">
                   <button
@@ -1081,8 +1074,7 @@ const ProjectList = () => {
                         </div>
                       </div>
                     </div>
-                  </Link>
-
+                  </div>
                 ))}
               </div>
             </div>
