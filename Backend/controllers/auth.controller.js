@@ -121,7 +121,7 @@ export const sendLoginOTP = async (req, res) => {
         await prisma.oTP.upsert({
             where: { email },
             update: { otp: otpCode, expiresAt },
-            create: { email, otp: otpCode, expiresAt },
+            create: { email, otp: otpCode, expiresAt, role: user.role },
         });
 
         await sendEmail(

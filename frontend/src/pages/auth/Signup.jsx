@@ -12,7 +12,7 @@ function Signup() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [role, setRole] = useState('manager');
+  const [role, setRole] = useState('');
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
@@ -132,8 +132,8 @@ function Signup() {
                   <input
                     type="radio"
                     name="role"
-                    value="manager"
-                    checked={role === 'manager'}
+                    value="PROJECT_MANAGER"
+                    checked={role === 'PROJECT_MANAGER'}
                     onChange={(e) => setRole(e.target.value)}
                     className="accent-blue-600"
                   />
@@ -143,8 +143,8 @@ function Signup() {
                   <input
                     type="radio"
                     name="role"
-                    value="member"
-                    checked={role === 'member'}
+                    value="PROJECT_MEMBER"
+                    checked={role === 'PROJECT_MEMBER'}
                     onChange={(e) => setRole(e.target.value)}
                     className="accent-blue-600"
                   />
