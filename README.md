@@ -1,4 +1,3 @@
-# TeamDivineDebugger-SynergySphere
 # 🌐 SynergySphere – Advanced Team Collaboration Platform
 
 ![SynergySphere Banner](./assets/banner.png)
@@ -10,8 +9,8 @@
 * [Project Overview](#project-overview)
 * [Problem Statement](#problem-statement)
 * [Proposed Solution](#proposed-solution)
-* [Key Features](#key-features)
 * [Technical Stack](#technical-stack)
+* [Key Features](#key-features)
 * [Architecture](#architecture)
 * [Screenshots & GIFs](#screenshots--gifs)
 * [Setup Instructions](#setup-instructions)
@@ -64,6 +63,25 @@ SynergySphere transforms team collaboration by combining **task management**, **
 
 ---
 
+## 🛠 Technical Stack
+
+Prepare to be amazed by the powerhouse technologies behind SynergySphere!
+
+| Layer            | Technology & Description                        | Documentation / Links                                                   |
+| ---------------- | ----------------------------------------------- | ----------------------------------------------------------------------- |
+| Frontend         | React (SPA) with TailwindCSS for stunning UI    | [React](https://reactjs.org/) / [TailwindCSS](https://tailwindcss.com/) |
+| Backend          | Node.js + Express.js for scalable APIs          | [Node.js](https://nodejs.org/) / [Express.js](https://expressjs.com/)   |
+| Database         | PostgreSQL for high-performance relational data | [PostgreSQL](https://www.postgresql.org/)                               |
+| Caching          | Redis for lightning-fast responses              | [Redis](https://redis.io/)                                              |
+| Containerization | Docker ensures seamless deployment              | [Docker](https://www.docker.com/)                                       |
+| Version Control  | Git for robust version management               | [Git](https://git-scm.com/)                                             |
+| Authentication   | JWT for secure, token-based auth                | [JWT](https://jwt.io/)                                                  |
+| Utilities        | Axios, Date-Fns, and more for smooth UX         | [Axios](https://axios-http.com/) / [Date-Fns](https://date-fns.org/)    |
+
+> Click on the links to explore each technology in detail.
+
+---
+
 ## 🔑 Key Features
 
 * **User Authentication:** Secure login and registration.
@@ -73,20 +91,6 @@ SynergySphere transforms team collaboration by combining **task management**, **
 * **Progress Visualization:** Intuitive task boards and status charts.
 * **Notifications:** Alerts for important updates and deadlines.
 * **Responsive UI:** Optimized for mobile and desktop interfaces.
-
----
-
-## 🛠 Technical Stack
-
-| Layer            | Technology                             |
-| ---------------- | -------------------------------------- |
-| Frontend         | React (SPA)                            |
-| Backend          | Node.js, Express.js                    |
-| Database         | PostgreSQL                             |
-| Caching          | Redis                                  |
-| Containerization | Docker                                 |
-| Version Control  | Git                                    |
-| Others           | JWT Auth, Date-Fns, Axios, TailwindCSS |
 
 ---
 
