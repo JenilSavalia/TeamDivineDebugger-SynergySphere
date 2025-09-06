@@ -8,31 +8,28 @@ const prisma = new PrismaClient();
 export const createProject = async (req, res) => {
   try {
     const { name, tags, projectManagerId, deadline, priority, description } = req.validatedData;
-    
+
     // Handle image upload
-    let imageUrl = req.validatedData.image; // If image URL is provided
-    
+    let imageUrl = req.validatedData.image || null; // If image URL is provided
     if (req.file) {
-      // If file is uploaded, use the uploaded file path
       imageUrl = `/uploads/projects/${req.file.filename}`;
     }
 
-    // ✅ If projectManagerId is provided, check if user exists
-    let manager = null;
+    // Check if project manager exists (optional)
     if (projectManagerId) {
-      manager = await prisma.user.findUnique({
+      const manager = await prisma.user.findUnique({
         where: { id: projectManagerId }
       });
 
       if (!manager) {
         return res.status(404).json({
           success: false,
-          message: 'Project manager not found'
+          message: "Project manager not found"
         });
       }
     }
 
-    // ✅ Allow null projectManagerId
+    // Create project
     const project = await prisma.project.create({
       data: {
         name,
@@ -47,7 +44,7 @@ export const createProject = async (req, res) => {
         projectManager: {
           select: {
             id: true,
-            name: true,
+            username: true,
             email: true
           }
         }
@@ -56,19 +53,21 @@ export const createProject = async (req, res) => {
 
     res.status(201).json({
       success: true,
-      message: 'Project created successfully',
+      message: "Project created successfully",
       data: project
     });
 
   } catch (error) {
-    console.error('Create project error:', error);
+    console.error("Create project error:", error);
     res.status(500).json({
       success: false,
-      message: 'Failed to create project',
-      error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error'
+      message: "Failed to create project",
+      error: process.env.NODE_ENV === "development" ? error.message : "Internal server error"
     });
   }
 };
+
+
 
 // @desc    Get all projects
 // @route   GET /api/projects
