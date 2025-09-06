@@ -32,7 +32,28 @@ It’s a **desktop and mobile-ready collaboration platform** designed to be the 
 * Act as a **command center** for tracking progress and resources.
 * Deliver a **smooth, intuitive, and responsive experience** for both mobile and desktop users.
 
+
 ---
+
+## 📸 Screenshots & GIFs
+
+**Mobile Dashboard:**
+![Mobile Dashboard](./responsive-design.png)
+
+**Project Detail View:**
+![Project Detail](./assets/project-detail.png)
+
+**Task Board View:**
+![Task Board](./assets/task-board.png)
+
+**Notifications & Communication:**
+![Notifications](./assets/notifications.png)
+
+---
+
+
+---
+
 
 ## 🛑 Problem Statement
 
@@ -103,24 +124,6 @@ Prepare to be amazed by the powerhouse technologies behind SynergySphere!
 * **Database (PostgreSQL):** Optimized for relational data efficiency.
 * **Docker:** Ensures consistent deployment across platforms.
 
-
----
-
-## 📸 Screenshots & GIFs
-
-**Mobile Dashboard:**
-![Mobile Dashboard](./assets/mobile-dashboard.png)
-
-**Project Detail View:**
-![Project Detail](./assets/project-detail.png)
-
-**Task Board View:**
-![Task Board](./assets/task-board.png)
-
-**Notifications & Communication:**
-![Notifications](./assets/notifications.png)
-
----
 
 ## ⚙️ Setup Instructions
 
