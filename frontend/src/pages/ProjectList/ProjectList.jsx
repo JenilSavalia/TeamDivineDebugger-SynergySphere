@@ -24,6 +24,9 @@ import {
   Sun, Moon,
   Upload
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
+
+
 
 const ProjectList = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -761,7 +764,7 @@ const ProjectList = () => {
               {!sidebarCollapsed && <span className="text-sm">Recent</span>}
             </button> */}
 
-              {/* <button
+            {/* <button
                 className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded w-full"
                 onClick={() => toggleSection('starred')}
               >
@@ -867,7 +870,7 @@ const ProjectList = () => {
                   </span>
                 </button>
               </div>
-              
+
               {/* Profile Menu */}
               <div className="relative">
                 <button
@@ -948,42 +951,40 @@ const ProjectList = () => {
               {/* Grid for projects */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                 {projects.map((project) => (
-                  <div
-                    key={project.id}
-                    className="bg-white rounded-lg border p-6 border-gray-200"
-                  >
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-red-500 rounded flex items-center justify-center">
-                        <div className="w-6 h-6 bg-white rounded flex items-center justify-center">
-                          <div className="w-3 h-3 bg-red-500 rounded"></div>
+                  <Link to={`/dashboard/${project.id}`}>
+                    <div
+                      key={project.id}
+                      className="bg-white rounded-lg border p-6 border-gray-200 h-full"
+                    >
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-red-500 rounded flex items-center justify-center">
+                          <div className="w-6 h-6 bg-white rounded flex items-center justify-center">
+                            <div className="w-3 h-3 bg-red-500 rounded"></div>
+                          </div>
                         </div>
-                      </div>
-                      <div className="flex-1">
-                        <h3 className="font-medium mb-1">{project.title}</h3>
-                        <p className="text-sm text-gray-600 mb-4">{project.type}</p>
+                        <div className="flex-1">
+                          <h3 className="font-medium mb-1">{project.title}</h3>
+                          <p className="text-sm text-gray-600 mb-4">{project.type}</p>
 
-                        <div className="mb-4">
-                          <h4 className="text-sm font-medium text-gray-700 mb-2">
-                            Quick links
-                          </h4>
-                          <div className="space-y-1">
-                            <div className="flex items-center justify-between text-sm">
-                              <span>My open work items</span>
-                              <span className="text-gray-500">{project.openItems}</span>
-                            </div>
-                            <div className="text-sm text-gray-600">
-                              Done work items: {project.doneItems}
+                          <div className="mb-4">
+                            <h4 className="text-sm font-medium text-gray-700 mb-2">
+                              Quick links
+                            </h4>
+                            <div className="space-y-1">
+                              <div className="flex items-center justify-between text-sm">
+                                <span>My open work items</span>
+                                <span className="text-gray-500">{project.openItems}</span>
+                              </div>
+                              <div className="text-sm text-gray-600">
+                                Done work items: {project.doneItems}
+                              </div>
                             </div>
                           </div>
                         </div>
-
-                        <div className="flex items-center gap-2">
-                          <span className="text-sm">1 board</span>
-                          <ChevronDown className="w-4 h-4" />
-                        </div>
                       </div>
                     </div>
-                  </div>
+                  </Link>
+
                 ))}
               </div>
             </div>
