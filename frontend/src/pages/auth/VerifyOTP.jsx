@@ -29,7 +29,7 @@ export default function VerifyOTP() {
             }
             else if (authType === 'login') {
                 apiUrl = LOGIN_OTP_VERIFY;
-                payload = { email,password, otp };
+                payload = { email, password, otp };
             } else {
                 setError('Invalid authentication type');
                 setLoading(false);
@@ -39,7 +39,7 @@ export default function VerifyOTP() {
             const response = await axios.post(apiUrl, payload, { withCredentials: true });
 
             console.log(response)
-
+            localStorage.setItem("user", JSON.stringify(response.data.user))
             // Your original navigation logic
             if (authType === 'signup') {
                 navigate('/auth/login');
@@ -61,7 +61,7 @@ export default function VerifyOTP() {
         setOtp("");
         await axios.post(RESEND_OTP, { email })
             .then(() => {
-                toast.success('OTP resent successfully, please check your email.' );
+                toast.success('OTP resent successfully, please check your email.');
             }).catch(err => {
                 console.log('Resend OTP error:', err);
                 setError(err.response?.data?.message || 'Failed to resend OTP');
