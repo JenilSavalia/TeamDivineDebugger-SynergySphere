@@ -10,6 +10,7 @@ import VerifyOTP from './pages/auth/VerifyOTP'
 import Dashboard from './pages/Dashboard/Dashboard'
 import Resetpass from './pages/auth/Resetpass'
 import Navbar from './pages/Navbar/Navbar'
+import ProjectList from './pages/ProjectList/ProjectList'
 
 function App() {
   const [count, setCount] = useState(0)
@@ -17,7 +18,7 @@ function App() {
   return (
     <>
       <BrowserRouter>
-        <Navbar /> {/* Navbar outside Routes to remain consistent across pages */}
+        {/* <Navbar /> Navbar outside Routes to remain consistent across pages */}
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/auth" element={<AuthPage />}>
@@ -27,7 +28,8 @@ function App() {
             <Route path='verify-otp' element={<VerifyOTP />} />
             <Route path='reset-password/:token' element={<Resetpass />} />
           </Route>
-          <Route path='/dashboard' element={<Dashboard />} />
+          <Route path='/dashboard' element={<ProjectList />} />
+          <Route path='/dashboard/:id' element={<Dashboard />} />
         </Routes>
       </BrowserRouter>
     </>
