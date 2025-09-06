@@ -42,6 +42,36 @@ const ProjectList = () => {
   const [showSuggestions, setShowSuggestions] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   const searchRef = useRef(null);
+  const [projects, setProjects] = useState([
+    {
+      id: 1,
+      title: '2025 TermScout Development',
+      type: 'Team-managed business',
+      openItems: 0,
+      doneItems: 5,
+    },
+    {
+      id: 2,
+      title: 'UI Revamp Q2',
+      type: 'Design initiative',
+      openItems: 3,
+      doneItems: 10,
+    },
+    {
+      id: 3,
+      title: 'API Integration Phase 1',
+      type: 'Development sprint',
+      openItems: 1,
+      doneItems: 7,
+    },
+    {
+      id: 4,
+      title: 'Customer Feedback Portal',
+      type: 'Product feature',
+      openItems: 2,
+      doneItems: 4,
+    },
+  ]);
 
   // Check if mobile on mount and window resize
   useEffect(() => {
@@ -76,37 +106,6 @@ const ProjectList = () => {
       [section]: !prev[section]
     }));
   };
-
-  const projects = [
-    {
-      id: 1,
-      title: '2025 TermScout Development',
-      type: 'Team-managed business',
-      openItems: 0,
-      doneItems: 5,
-    },
-    {
-      id: 2,
-      title: 'UI Revamp Q2',
-      type: 'Design initiative',
-      openItems: 3,
-      doneItems: 10,
-    },
-    {
-      id: 3,
-      title: 'API Integration Phase 1',
-      type: 'Development sprint',
-      openItems: 1,
-      doneItems: 7,
-    },
-    {
-      id: 4,
-      title: 'Customer Feedback Portal',
-      type: 'Product feature',
-      openItems: 2,
-      doneItems: 4,
-    },
-  ];
 
   // Filter projects for suggestions based on search query
   const filteredSuggestions = projects.filter(project =>
@@ -530,6 +529,17 @@ const ProjectList = () => {
                   console.log({
                     projectName, projectTags, projectManager, deadline, priority, description, projectImage
                   });
+
+                  // Add new project to projects array
+                  if (projectName && projectManager && description) {
+                    setProjects(prev => [...prev, {
+                      id: prev.length + 1,
+                      title: projectName,
+                      type: projectTags.join(', ') || 'New Project',
+                      openItems: 0,
+                      doneItems: 0,
+                    }]);
+                  }
 
                   if (!createAnother) {
                     setCreateProjectModalOpen(false);
