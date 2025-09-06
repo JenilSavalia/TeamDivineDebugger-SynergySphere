@@ -25,6 +25,8 @@ import {
 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
+
+
 const ProjectList = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
@@ -72,6 +74,30 @@ const ProjectList = () => {
       doneItems: 4,
     },
   ]);
+
+  const [projectName, setProjectName] = useState('');
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState(null);
+
+  const fetchData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const response = await axios.get('http://localhost:5000/api/projects');
+      setData(response.data);
+      console.log(projectName)
+    } catch (err) {
+      setError('Failed to fetch data');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
 
   // Check if mobile on mount and window resize
   useEffect(() => {
