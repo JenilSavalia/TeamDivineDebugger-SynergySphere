@@ -11,10 +11,13 @@ import {
   Palette,
   MessageCircle,
   Zap,
-  AlertTriangle, Clock, Check} from 'lucide-react';
+  AlertTriangle, Clock, Check
+} from 'lucide-react';
+
+import ProjectSummary from './ProjectSummary'
 
 const Dashboard = () => {
-  const [selectedView, setSelectedView] = useState('Timeline');
+  const [selectedView, setSelectedView] = useState('Summary');
   const [selectedTimeRange, setSelectedTimeRange] = useState('Months');
 
   const milestones = [
@@ -225,6 +228,99 @@ const Dashboard = () => {
     }
   ];
 
+  const weekDays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri'];
+
+  const calendarData = [
+    // Week 1 (Sep 1-5)
+    {
+      dates: [1, 2, 3, 4, 5],
+      events: [
+        {
+          day: 0, // Monday
+          task: {
+            id: 'BB2025-4',
+            title: 'Milestone 3: SpaceTime Improvements',
+            hasDeadline: true,
+            spans: 5 // spans across all 5 days
+          }
+        }
+      ],
+      moreCount: [4, 4, 4, 4, 4]
+    },
+    // Week 2 (Sep 8-12)
+    {
+      dates: [8, 9, 10, 11, 12],
+      events: [
+        {
+          day: 0, // Monday
+          task: {
+            id: 'BB2025-6',
+            title: 'Milestone 5: Free Scan + AI Improvement',
+            hasDeadline: false,
+            spans: 5
+          }
+        }
+      ],
+      moreCount: [2, 2, 2, 2, 2]
+    },
+    // Week 3 (Sep 15-19)
+    {
+      dates: [15, 16, 17, 18, 19],
+      events: [
+        {
+          day: 0, // Monday
+          task: {
+            id: 'BB2025-7',
+            title: 'Milestone 6: Safe AI Badge + Final AI Tuning',
+            hasDeadline: false,
+            spans: 2
+          }
+        },
+        {
+          day: 1, // Tuesday
+          task: {
+            id: 'BB2025-9',
+            title: 'Milestone 8: Analytics Dashboards MVP',
+            hasDeadline: false,
+            spans: 1
+          }
+        }
+      ],
+      moreCount: [2, 0, 0, 0, 0]
+    },
+    // Week 4 (Sep 22-26)
+    {
+      dates: [22, 23, 24, 25, 26],
+      events: [],
+      moreCount: [0, 0, 0, 0, 0]
+    }
+  ];
+
+  const renderTaskBar = (task, weekIndex, eventIndex) => {
+    const baseClasses = "flex items-center px-2 py-1 text-xs font-medium rounded-sm mb-1";
+    const bgColor = task.hasDeadline ? "bg-red-50 border border-red-200" : "bg-purple-50 border border-purple-200";
+    const textColor = task.hasDeadline ? "text-red-700" : "text-purple-700";
+
+    return (
+      <div
+        key={`${weekIndex}-${eventIndex}`}
+        className={`${baseClasses} ${bgColor} ${textColor}`}
+        style={{
+          gridColumn: `span ${task.spans}`,
+          minWidth: '200px'
+        }}
+      >
+        <Zap className="w-3 h-3 mr-1 flex-shrink-0" />
+        <span className="font-semibold mr-1">{task.id}</span>
+        <span className="truncate">{task.title}</span>
+        {task.hasDeadline && (
+          <Clock className="w-3 h-3 ml-1 flex-shrink-0" />
+        )}
+      </div>
+    );
+  };
+
+
 
   const renderTaskCard = (task, index) => (
     <div key={index} className="bg-white rounded-lg border border-gray-200 p-4 mb-3 shadow-sm hover:shadow-md transition-shadow">
@@ -359,7 +455,7 @@ const Dashboard = () => {
 
             {/* Navigation Tabs */}
             <div className="flex items-center space-x-6 mt-6 border-b border-gray-200">
-              {['Summary', 'Board', 'List', 'Calendar', 'Timeline', 'Forms', 'Pages', 'Attachments', 'All work', 'Reports', 'Archived work items'].map((tab) => (
+              {['Summary', 'Board', 'List', 'Calendar', 'Timeline'].map((tab) => (
                 <button
                   key={tab}
                   onClick={() => setSelectedView(tab)}
@@ -613,6 +709,86 @@ const Dashboard = () => {
                 ))}
               </div>
             </div>
+            )
+          }
+
+
+          {
+            selectedView == "Calendar" &&
+            (<div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+              {/* Header */}
+              <div className="grid grid-cols-5 border-b border-gray-200">
+                {weekDays.map((day) => (
+                  <div
+                    key={day}
+                    className="px-4 py-3 text-center font-medium text-gray-700 bg-gray-50 border-r border-gray-200 last:border-r-0"
+                  >
+                    {day}
+                  </div>
+                ))}
+              </div>
+
+              {/* Calendar Body */}
+              <div className="divide-y divide-gray-200">
+                {calendarData.map((week, weekIndex) => (
+                  <div key={weekIndex} className="grid grid-cols-5 min-h-28 relative">
+                    {week.dates.map((date, dayIndex) => (
+                      <div
+                        key={dayIndex}
+                        className="border-r border-gray-200 last:border-r-0 p-3 bg-white relative"
+                      >
+                        {/* Date Number */}
+                        <div className="text-sm font-semibold text-gray-900 mb-1">
+                          {date}
+                        </div>
+
+                        {/* Events Container */}
+                        <div className="relative z-10 space-y-1 min-h-[1.5rem]">
+                          {/* Render events that start on this day */}
+                          {week.events
+                            .filter((event) => event.day === dayIndex)
+                            .map((event, eventIndex) => {
+                              const span = event.task.spans;
+                              return (
+                                <div
+                                  key={eventIndex}
+                                  className="absolute top-6 left-0 z-10"
+                                  style={{
+                                    gridColumnStart: dayIndex + 1,
+                                    gridColumnEnd: `span ${span}`,
+                                    width: `calc(${span * 100}% + ${(span - 1)}px)`,
+                                    maxWidth:
+                                      span >= 5
+                                        ? 'calc(500% + 4px)'
+                                        : span >= 2
+                                          ? `calc(${span * 100}% + ${span - 1}px)`
+                                          : '100%',
+                                  }}
+                                >
+                                  {renderTaskBar(event.task, weekIndex, eventIndex)}
+                                </div>
+                              );
+                            })}
+
+                          {/* More Indicator */}
+                          {week.moreCount?.[dayIndex] > 0 && (
+                            <div className="absolute bottom-1 left-0 text-xs text-gray-500 font-medium z-20">
+                              {week.moreCount[dayIndex]} more
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                ))}
+              </div>
+            </div>
+            )
+          }
+
+          {
+            selectedView == "Summary" && (
+              <ProjectSummary />
             )
           }
 
