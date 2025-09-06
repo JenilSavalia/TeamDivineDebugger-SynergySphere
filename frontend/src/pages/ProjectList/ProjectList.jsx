@@ -577,22 +577,22 @@ const ProjectList = () => {
               {!sidebarCollapsed && <span className="text-sm">For you</span>}
             </div>
 
-            <button
+            {/* <button
               className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded w-full"
               onClick={() => toggleSection('recent')}
             >
               {expandedSections.recent ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
               {!sidebarCollapsed && <span className="text-sm">Recent</span>}
-            </button>
+            </button> */}
 
-            <button
-              className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded w-full"
-              onClick={() => toggleSection('starred')}
-            >
-              {expandedSections.starred ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-              <Star className="w-4 h-4" />
-              {!sidebarCollapsed && <span className="text-sm">Starred</span>}
-            </button>
+              {/* <button
+                className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded w-full"
+                onClick={() => toggleSection('starred')}
+              >
+                {expandedSections.starred ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                <Star className="w-4 h-4" />
+                {!sidebarCollapsed && <span className="text-sm">Starred</span>}
+              </button> */}
 
             <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded">
               <Grid3X3 className="w-4 h-4" />
@@ -620,10 +620,10 @@ const ProjectList = () => {
 
           {/* Sidebar Footer */}
           <div className="mt-auto space-y-1">
-            <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded">
+            {/* <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded">
               <Filter className="w-4 h-4" />
               {!sidebarCollapsed && <span className="text-sm">Filters</span>}
-            </div>
+            </div> */}
             <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded">
               <BarChart3 className="w-4 h-4" />
               {!sidebarCollapsed && <span className="text-sm">Dashboards</span>}
