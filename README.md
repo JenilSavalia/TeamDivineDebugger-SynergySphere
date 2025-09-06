@@ -132,35 +132,6 @@ Prepare to be amazed by the powerhouse technologies behind SynergySphere!
 * PostgreSQL >= 14.x
 * Docker >= 24.x
 
-### Installation Steps
-
-```bash
-# Clone the repository
-git clone [repository-url]
-cd synergy-sphere
-
-# Backend setup
-cd backend
-npm install
-
-# Frontend setup
-cd ../frontend
-npm install
-
-# Setup PostgreSQL database
-CREATE DATABASE synergy_sphere;
-
-# Configure .env file with database and Redis credentials
-
-# Run Docker containers
-docker-compose up --build
-
-# Start backend server
-npm run dev
-
-# Start frontend server
-npm start
-```
 
 ---
 
