@@ -101,10 +101,8 @@ Prepare to be amazed by the powerhouse technologies behind SynergySphere!
 * **Frontend (React SPA):** Handles responsive UI and interactions.
 * **Backend (Node.js + Express):** Manages business logic and database communication.
 * **Database (PostgreSQL):** Optimized for relational data efficiency.
-* **Caching (Redis):** Fast retrieval for frequent queries.
 * **Docker:** Ensures consistent deployment across platforms.
 
-![Architecture Diagram](./assets/architecture.png)
 
 ---
 
