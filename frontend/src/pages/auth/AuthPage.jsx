@@ -10,37 +10,37 @@ function AuthPage() {
     {
       id: 1,
       quote:
-        'The contract changes we made have allowed our company to close business faster, speeding our time to revenue and allowing us to develop better relationships with our customers.',
+        'SynergySphere has transformed our team’s collaboration. Tasks are clearer, communication is seamless, and the platform’s proactive insights help us stay ahead of potential bottlenecks.',
       name: 'Justin Widlund',
-      title: 'Freshworks AGC',
-      company: 'Freshworks',
-      avatar: 'FW',
+      title: 'Team Lead',
+      company: 'InnovateTech',
+      avatar: 'JW',
     },
     {
       id: 2,
       quote:
-        'TermScout has revolutionized how we handle contract negotiations. What used to take weeks now takes days, and our legal team can focus on strategic work rather than routine reviews.',
+        'With SynergySphere, our team’s productivity has soared. The intelligent task management and real-time communication tools have cut our project delivery time by 40%.',
       name: 'Sarah Chen',
-      title: 'Legal Director',
-      company: 'TechFlow Inc',
+      title: 'Project Manager',
+      company: 'NextGen Solutions',
       avatar: 'SC',
     },
     {
       id: 3,
       quote:
-        "The AI-powered contract analysis has been a game-changer for our procurement process. We've reduced contract review time by 70% and improved compliance across all departments.",
+        'The platform’s ability to anticipate issues and provide actionable insights has been a game-changer. SynergySphere keeps our team aligned and focused on what matters most.',
       name: 'Michael Rodriguez',
-      title: 'Chief Procurement Officer',
-      company: 'Global Dynamics',
+      title: 'Operations Director',
+      company: 'GlobalSync',
       avatar: 'MR',
     },
     {
       id: 4,
       quote:
-        "Implementation was seamless and the ROI was immediate. Our contract approval process is now 3x faster, and we've eliminated most of the back-and-forth that used to slow us down.",
+        'SynergySphere’s intuitive design and smart resource management have streamlined our workflows. It feels like the platform is an extension of our team’s thinking process.',
       name: 'Emma Thompson',
-      title: 'Operations Manager',
-      company: 'InnovateCorp',
+      title: 'Collaboration Specialist',
+      company: 'TeamWorks Inc',
       avatar: 'ET',
     },
   ];
@@ -111,11 +111,11 @@ function AuthPage() {
 
                   {/* Author info */}
                   <div className='flex items-center mt-auto'>
-                    <div className='w-16 h-16 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center mr-6 border border-white border-opacity-30'>
+                    {/* <div className='w-16 h-16 bg-white bg-opacity-20 backdrop-blur-sm rounded-full flex items-center justify-center mr-6 border border-white border-opacity-30'>
                       <span className='text-white font-bold text-lg'>
                         {testimonial.avatar}
                       </span>
-                    </div>
+                    </div> */}
                     <div>
                       <div className='font-semibold text-white text-lg'>
                         {testimonial.name}
