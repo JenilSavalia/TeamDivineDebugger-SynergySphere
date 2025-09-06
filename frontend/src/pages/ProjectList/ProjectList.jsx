@@ -1,5 +1,5 @@
 // frontend/src/pages/ProjectList/ProjectList.jsx
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Menu,
   Grid3X3,
@@ -32,12 +32,27 @@ const ProjectList = () => {
   const [createProjectModalOpen, setCreateProjectModalOpen] = useState(false);
   const [notificationOpen, setNotificationOpen] = useState(false);
   const [onlyUnread, setOnlyUnread] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [expandedSections, setExpandedSections] = useState({
     recent: true,
     starred: false
   });
 
+  // Check if mobile on mount and window resize
+  useEffect(() => {
+    const checkIsMobile = () => {
+      const mobile = window.innerWidth < 768;
+      setIsMobile(mobile);
+      if (mobile) {
+        setSidebarCollapsed(true);
+      }
+    };
 
+    checkIsMobile();
+    window.addEventListener('resize', checkIsMobile);
+    return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
 
   const toggleSection = (section) => {
     setExpandedSections(prev => ({
@@ -45,6 +60,7 @@ const ProjectList = () => {
       [section]: !prev[section]
     }));
   };
+
   const projects = [
     {
       id: 1,
@@ -76,41 +92,20 @@ const ProjectList = () => {
     },
   ];
 
-  const notifications = [
-    {
-      id: 1,
-      user: "Spencer Lasley",
-      date: "2 weeks ago",
-      title: "8.26.2025 Agenda",
-      project: "BB2025-57 · In Progress",
-      mention:
-        "@Olga V. Mack @mamay nakhashi @Kalpesh Senva @Dhairya Chawda @Jenil Savalia @parth – I’ll be creating agendas here…",
-    },
-    {
-      id: 2,
-      user: "Spencer Lasley",
-      date: "1 week ago",
-      title: "8.28.2025 Agenda",
-      project: "BB2025-58 · To Do",
-      mention:
-        "@Olga V. Mack @mamay nakhashi @Kalpesh Senva @Jenil Savalia @Dhairya Chawda see above for the agenda for the call…",
-    },
-  ];
   // ---------------- Notification Panel ----------------
   const NotificationPanel = () => {
     if (!notificationOpen) return null;
 
-    // Dummy notifications (safe fake data)
     const notifications = [
       {
         id: 1,
         user: "Alex Carter",
-        avatar: "", // leave empty for initials
+        avatar: "",
         date: "2 weeks ago",
         title: "Q3 Planning Agenda",
         project: "ACME-57 · In Progress",
         mention:
-          "@Jamie Brooks @Taylor Morgan – I’ll be creating agendas here for our weekly syncs.",
+          "@Jamie Brooks @Taylor Morgan – I'll be creating agendas here for our weekly syncs.",
         unread: true,
       },
       {
@@ -121,7 +116,7 @@ const ProjectList = () => {
         title: "Sprint Retrospective",
         project: "ACME-58 · To Do",
         mention:
-          "@Alex Carter @Taylor Morgan please check the updated notes for this sprint’s retrospective.",
+          "@Alex Carter @Taylor Morgan please check the updated notes for this sprint's retrospective.",
         unread: false,
       },
     ];
@@ -130,7 +125,6 @@ const ProjectList = () => {
       ? notifications.filter((n) => n.unread)
       : notifications;
 
-    // Helper: render avatar like Gmail
     const Avatar = ({ name, avatar }) => {
       if (avatar) {
         return (
@@ -141,7 +135,6 @@ const ProjectList = () => {
           />
         );
       }
-      // initials
       const initials = name
         .split(" ")
         .map((n) => n[0])
@@ -155,8 +148,7 @@ const ProjectList = () => {
     };
 
     return (
-      <div className="absolute top-14 right-4 w-[420px] h-[80vh] bg-white shadow-xl border rounded-lg flex flex-col z-50 border-gray-200">
-        {/* Header */}
+      <div className={`absolute ${isMobile ? 'inset-0' : 'top-14 right-4 w-[420px] h-[80vh]'} bg-white shadow-xl border rounded-lg flex flex-col z-50 border-gray-200`}>
         <div className="flex items-center justify-between p-3 border-b border-gray-200">
           <h2 className="text-lg font-medium">Notifications</h2>
           <button
@@ -167,10 +159,9 @@ const ProjectList = () => {
           </button>
         </div>
 
-        {/* Tabs + Unread Toggle */}
         <div className="flex items-center justify-between border-b px-3 border-gray-200">
           <div className="flex">
-            <button className="px-3 py-2 text-sm font-medium text-blue-600 border-b-2 border-blue-600 border-b-blue-600">
+            <button className="px-3 py-2 text-sm font-medium text-blue-600 border-b-2 border-blue-600">
               Direct
             </button>
             <button className="px-3 py-2 text-sm text-gray-600 hover:text-gray-900">
@@ -178,21 +169,19 @@ const ProjectList = () => {
             </button>
           </div>
           <div className="flex items-center gap-2 text-sm text-gray-600">
-            <span>Only show unread</span>
+            <span className="hidden sm:inline">Only show unread</span>
+            <span className="sm:hidden">Unread</span>
             <button
               onClick={() => setOnlyUnread(!onlyUnread)}
-              className={`w-10 h-5 flex items-center rounded-full ${onlyUnread ? "bg-blue-600" : "bg-gray-300"
-                }`}
+              className={`w-10 h-5 flex items-center rounded-full ${onlyUnread ? "bg-blue-600" : "bg-gray-300"}`}
             >
               <div
-                className={`w-4 h-4 bg-white rounded-full shadow transform transition ${onlyUnread ? "translate-x-5" : "translate-x-1"
-                  }`}
+                className={`w-4 h-4 bg-white rounded-full shadow transform transition ${onlyUnread ? "translate-x-5" : "translate-x-1"}`}
               />
             </button>
           </div>
         </div>
 
-        {/* Slack Banner */}
         <div className="p-4 border-b border-gray-200">
           <p className="text-sm text-gray-700 mb-2">
             Get instant updates in Slack
@@ -202,36 +191,29 @@ const ProjectList = () => {
           </button>
         </div>
 
-        {/* Notifications List */}
         <div className="flex-1 overflow-y-auto">
           {filtered.map((n) => (
             <div
               key={n.id}
               className="p-4 border-b hover:bg-gray-50 transition relative flex gap-3 border-gray-200"
             >
-              {/* Avatar */}
               <Avatar name={n.user} avatar={n.avatar} />
-
-              {/* Notification Content */}
-              <div className="flex-1">
+              <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <p className="text-sm font-medium">
+                  <p className="text-sm font-medium truncate">
                     {n.user}{" "}
                     <span className="text-gray-500">mentioned you</span>
                   </p>
                   {n.unread && (
-                    <span className="w-2 h-2 bg-blue-600 rounded-full" />
+                    <span className="w-2 h-2 bg-blue-600 rounded-full flex-shrink-0" />
                   )}
                 </div>
                 <p className="text-xs text-gray-500">{n.date}</p>
-
                 <p className="text-sm mt-1 font-medium">{n.title}</p>
-                <p className="text-xs text-gray-500">{n.project}</p>
-
+                <p className="text-xs text-gray-500 truncate">{n.project}</p>
                 <p className="text-sm text-gray-700 mt-2 line-clamp-2">
                   {n.mention}
                 </p>
-
                 <div className="flex gap-4 mt-2 text-xs text-blue-600">
                   <button>Reply</button>
                   <button>View thread</button>
@@ -244,12 +226,8 @@ const ProjectList = () => {
     );
   };
 
-
-
   const CreateProjectModal = () => {
     const [modalMaximized, setModalMaximized] = useState(false);
-
-    // form states
     const [projectName, setProjectName] = useState('');
     const [projectTags, setProjectTags] = useState([]);
     const [projectManager, setProjectManager] = useState('');
@@ -260,16 +238,10 @@ const ProjectList = () => {
     const [projectImagePreview, setProjectImagePreview] = useState(null);
     const [createAnother, setCreateAnother] = useState(false);
 
-
-
-    // limits and options
-    const nameCharLimit = 100;  // characters
-    const descCharLimit = 500;  // characters
-
+    const nameCharLimit = 100;
+    const descCharLimit = 500;
     const availableTags = ['Design', 'Development', 'Marketing', 'Research', 'Testing'];
 
-
-    // helpers
     const countChars = (text) => (text ? text.length : 0);
 
     const handleNameChange = (e) => {
@@ -296,12 +268,9 @@ const ProjectList = () => {
       );
     };
 
-
-
     const handleImageChange = (e) => {
       const file = e.target.files && e.target.files[0] ? e.target.files[0] : null;
       setProjectImage(file);
-      // revoke old preview url if any
       if (projectImagePreview) {
         try { URL.revokeObjectURL(projectImagePreview); } catch (err) { }
       }
@@ -318,14 +287,15 @@ const ProjectList = () => {
     const nameCount = countChars(projectName);
     const descCount = countChars(description);
 
-
     return (
-      <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div
-          className={`bg-white rounded-lg shadow-xl ${modalMaximized ? 'w-full h-full m-4' : 'w-full max-w-4xl mx-4 max-h-[90vh]'
-            } overflow-hidden`}
+          className={`bg-white rounded-lg shadow-xl ${
+            modalMaximized || isMobile 
+              ? 'w-full h-full' 
+              : 'w-full max-w-4xl max-h-[90vh]'
+          } overflow-hidden`}
         >
-          {/* header */}
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 bg-purple-500 rounded-sm flex items-center justify-center">
@@ -335,12 +305,14 @@ const ProjectList = () => {
             </div>
 
             <div className="flex items-center gap-2">
-              <button
-                className="p-1 hover:bg-gray-100 rounded"
-                onClick={() => setModalMaximized(!modalMaximized)}
-              >
-                {modalMaximized ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
-              </button>
+              {!isMobile && (
+                <button
+                  className="p-1 hover:bg-gray-100 rounded"
+                  onClick={() => setModalMaximized(!modalMaximized)}
+                >
+                  {modalMaximized ? <Minimize2 className="w-4 h-4" /> : <Maximize2 className="w-4 h-4" />}
+                </button>
+              )}
               <button
                 className="p-1 hover:bg-gray-100 rounded"
                 onClick={() => setCreateProjectModalOpen(false)}
@@ -350,14 +322,12 @@ const ProjectList = () => {
             </div>
           </div>
 
-          {/* content */}
-          <div className="p-6 overflow-y-auto" style={{ maxHeight: modalMaximized ? 'calc(100vh - 200px)' : '70vh' }}>
+          <div className="p-4 sm:p-6 overflow-y-auto" style={{ maxHeight: modalMaximized || isMobile ? 'calc(100vh - 200px)' : '70vh' }}>
             <p className="text-sm text-gray-600 mb-4">
               Required fields are marked with an asterisk <span className="text-red-500">*</span>
             </p>
 
-            <div className="space-y-4">
-              {/* Project Name */}
+            <div className="space-y-4 sm:space-y-6">
               <div>
                 <label className="block text-sm font-medium mb-2">
                   Project Name <span className="text-red-500">*</span>
@@ -369,16 +339,13 @@ const ProjectList = () => {
                   value={projectName}
                   onChange={handleNameChange}
                 />
-
                 <div className="mt-1 text-xs">
                   <span className={nameCount > nameCharLimit ? 'text-red-500' : 'text-gray-500'}>
                     {nameCount}/{nameCharLimit} characters
                   </span>
                 </div>
-
               </div>
 
-              {/* Tags multi-select */}
               <div>
                 <label className="block text-sm font-medium mb-2">Project Tags</label>
                 <div className="flex flex-wrap gap-2">
@@ -389,8 +356,9 @@ const ProjectList = () => {
                         key={tag}
                         type="button"
                         onClick={() => handleTagToggle(tag)}
-                        className={`px-3 py-1 rounded-full border text-sm ${active ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300'
-                          }`}
+                        className={`px-3 py-1 rounded-full border text-sm ${
+                          active ? 'bg-blue-600 text-white border-blue-600' : 'bg-white text-gray-700 border-gray-300'
+                        }`}
                       >
                         {tag}
                       </button>
@@ -399,7 +367,6 @@ const ProjectList = () => {
                 </div>
               </div>
 
-              {/* Manager + Deadline */}
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">Project Manager <span className="text-red-500">*</span></label>
@@ -427,10 +394,9 @@ const ProjectList = () => {
                 </div>
               </div>
 
-              {/* Priority */}
               <div>
                 <label className="block text-sm font-medium mb-2">Priority Level <span className="text-red-500">*</span></label>
-                <div className="flex items-center gap-6">
+                <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-6">
                   {['Low', 'Medium', 'High'].map((lvl) => (
                     <label key={lvl} className="flex items-center gap-2 text-sm">
                       <input
@@ -447,12 +413,11 @@ const ProjectList = () => {
                 </div>
               </div>
 
-              {/* Image upload with icon */}
               <div>
                 <label className="block text-sm font-medium mb-2">Project Image</label>
                 <label className="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-md cursor-pointer hover:bg-gray-50">
                   <Upload className="w-6 h-6 text-gray-500 mb-2" />
-                  <span className="text-xs text-gray-500">Click to upload or drag & drop</span>
+                  <span className="text-xs text-gray-500 text-center px-2">Click to upload or drag & drop</span>
                   <input
                     type="file"
                     accept="image/*"
@@ -461,7 +426,7 @@ const ProjectList = () => {
                   />
                 </label>
                 {projectImage && (
-                  <div className="mt-2 text-xs text-gray-600">
+                  <div className="mt-2 text-xs text-gray-600 truncate">
                     Selected: {projectImage.name}
                   </div>
                 )}
@@ -474,7 +439,6 @@ const ProjectList = () => {
                 )}
               </div>
 
-              {/* Description */}
               <div>
                 <label className="block text-sm font-medium mb-2">Project Description <span className="text-red-500">*</span></label>
                 <textarea
@@ -487,24 +451,21 @@ const ProjectList = () => {
                   <span className={descCount > descCharLimit ? 'text-red-500' : 'text-gray-500'}>
                     {descCount}/{descCharLimit} characters
                   </span>
-
                 </div>
               </div>
             </div>
           </div>
 
-          {/* footer */}
-          <div className="flex items-center justify-between p-4 border-t bg-gray-50">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border-t bg-gray-50 gap-3">
             <label className="flex items-center gap-2">
               <input type="checkbox" checked={createAnother} onChange={(e) => setCreateAnother(e.target.checked)} />
               <span className="text-sm">Create another</span>
             </label>
 
-            <div className="flex items-center gap-3">
+            <div className="flex items-center gap-3 w-full sm:w-auto">
               <button
-                className="px-4 py-2 text-sm bg-white border rounded-md hover:bg-gray-100"
+                className="flex-1 sm:flex-none px-4 py-2 text-sm bg-white border rounded-md hover:bg-gray-100"
                 onClick={() => {
-                  // Reset or discard
                   setProjectName('');
                   setProjectTags([]);
                   setProjectManager('');
@@ -523,9 +484,8 @@ const ProjectList = () => {
               </button>
 
               <button
-                className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
+                className="flex-1 sm:flex-none px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
                 onClick={() => {
-                  // send data to backend or handle creation
                   console.log({
                     projectName, projectTags, projectManager, deadline, priority, description, projectImage
                   });
@@ -533,7 +493,6 @@ const ProjectList = () => {
                   if (!createAnother) {
                     setCreateProjectModalOpen(false);
                   } else {
-                    // clear for another entry
                     setProjectName('');
                     setProjectTags([]);
                     setProjectManager('');
@@ -557,8 +516,6 @@ const ProjectList = () => {
     );
   };
 
-
-
   const CreateTaskModal = () => {
     const [workType, setWorkType] = useState('Task');
     const [status, setStatus] = useState('TO DO');
@@ -570,8 +527,12 @@ const ProjectList = () => {
     if (!createTaskModalOpen) return null;
 
     return (
-      <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50">
-        <div className={`bg-white rounded-lg shadow-xl ${modalMaximized ? 'w-full h-full m-4' : 'w-full max-w-2xl mx-4 max-h-[90vh]'} overflow-hidden`}>
+      <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
+        <div className={`bg-white rounded-lg shadow-xl ${
+          modalMaximized || isMobile 
+            ? 'w-full h-full' 
+            : 'w-full max-w-2xl max-h-[90vh]'
+        } overflow-hidden`}>
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <div className="flex items-center gap-2">
               <div className="w-4 h-4 bg-blue-500 rounded-sm flex items-center justify-center">
@@ -580,18 +541,22 @@ const ProjectList = () => {
               <span className="font-medium">New task</span>
             </div>
             <div className="flex items-center gap-2">
-              <button
-                className="p-1 hover:bg-gray-100 rounded"
-                onClick={() => setModalMaximized(!modalMaximized)}
-              >
-                <Minimize2 className="w-4 h-4" />
-              </button>
-              <button
-                className="p-1 hover:bg-gray-100 rounded"
-                onClick={() => setModalMaximized(!modalMaximized)}
-              >
-                <Maximize2 className="w-4 h-4" />
-              </button>
+              {!isMobile && (
+                <>
+                  <button
+                    className="p-1 hover:bg-gray-100 rounded"
+                    onClick={() => setModalMaximized(!modalMaximized)}
+                  >
+                    <Minimize2 className="w-4 h-4" />
+                  </button>
+                  <button
+                    className="p-1 hover:bg-gray-100 rounded"
+                    onClick={() => setModalMaximized(!modalMaximized)}
+                  >
+                    <Maximize2 className="w-4 h-4" />
+                  </button>
+                </>
+              )}
               <button
                 className="p-1 hover:bg-gray-100 rounded"
                 onClick={() => setCreateTaskModalOpen(false)}
@@ -601,7 +566,7 @@ const ProjectList = () => {
             </div>
           </div>
 
-          <div className="p-6 overflow-y-auto" style={{ maxHeight: modalMaximized ? 'calc(100vh - 200px)' : '70vh' }}>
+          <div className="p-4 sm:p-6 overflow-y-auto" style={{ maxHeight: modalMaximized || isMobile ? 'calc(100vh - 200px)' : '70vh' }}>
             <p className="text-sm text-gray-600 mb-4">
               Required fields are marked with an asterisk <span className="text-red-500">*</span>
             </p>
@@ -619,7 +584,7 @@ const ProjectList = () => {
                 </div>
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
                   <label className="block text-sm font-medium mb-2">
                     Work type <span className="text-red-500">*</span>
@@ -671,13 +636,13 @@ const ProjectList = () => {
               <div>
                 <label className="block text-sm font-medium mb-2">Description</label>
                 <div className="border rounded-md border-gray-200">
-                  <div className="border-b p-2 bg-gray-50 flex items-center gap-2 border-gray-200">
-                    <button className="px-2 py-1 text-sm hover:bg-gray-200 rounded">Tt</button>
-                    <button className="px-2 py-1 text-sm hover:bg-gray-200 rounded">•••</button>
-                    <button className="px-2 py-1 text-sm hover:bg-gray-200 rounded">A</button>
-                    <button className="px-2 py-1 text-sm hover:bg-gray-200 rounded">≡</button>
-                    <button className="px-2 py-1 text-sm hover:bg-gray-200 rounded">+</button>
-                    <button className="px-2 py-1 text-sm hover:bg-gray-200 rounded">※</button>
+                  <div className="border-b p-2 bg-gray-50 flex items-center gap-2 border-gray-200 overflow-x-auto">
+                    <button className="px-2 py-1 text-sm hover:bg-gray-200 rounded flex-shrink-0">Tt</button>
+                    <button className="px-2 py-1 text-sm hover:bg-gray-200 rounded flex-shrink-0">•••</button>
+                    <button className="px-2 py-1 text-sm hover:bg-gray-200 rounded flex-shrink-0">A</button>
+                    <button className="px-2 py-1 text-sm hover:bg-gray-200 rounded flex-shrink-0">≡</button>
+                    <button className="px-2 py-1 text-sm hover:bg-gray-200 rounded flex-shrink-0">+</button>
+                    <button className="px-2 py-1 text-sm hover:bg-gray-200 rounded flex-shrink-0">※</button>
                   </div>
                   <textarea
                     className="w-full p-3 min-h-[120px] resize-none focus:outline-none"
@@ -690,7 +655,7 @@ const ProjectList = () => {
             </div>
           </div>
 
-          <div className="flex items-center justify-between p-4 border-t bg-gray-50">
+          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between p-4 border-t bg-gray-50 gap-3">
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"
@@ -701,14 +666,12 @@ const ProjectList = () => {
               <span className="text-sm">Create another</span>
             </label>
             <button
-              className="px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
+              className="w-full sm:w-auto px-6 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 font-medium"
               onClick={() => {
-                // Handle task creation
                 console.log({ workType, status, summary, description, createAnother });
                 if (!createAnother) {
                   setCreateTaskModalOpen(false);
                 }
-                // Reset form if creating another
                 if (createAnother) {
                   setSummary('');
                   setDescription('');
@@ -725,32 +688,45 @@ const ProjectList = () => {
 
   return (
     <div className="flex h-screen bg-gray-50">
+      {/* Mobile Backdrop for Sidebar */}
+      {isMobile && mobileMenuOpen && (
+        <div
+          className="fixed inset-0 bg-black/30 z-40"
+          onClick={() => setMobileMenuOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <div className={`${sidebarCollapsed ? 'w-16' : 'w-64'} bg-white border-r transition-all duration-300 flex flex-col border-gray-200`}>
-        {/* Sidebar Header */}
+      <div className={`${
+        isMobile 
+          ? `fixed left-0 top-0 h-full z-50 transform transition-transform ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} w-64`
+          : sidebarCollapsed ? 'w-16' : 'w-64'
+      } bg-white border-r transition-all duration-300 flex flex-col border-gray-200`}>
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          {!sidebarCollapsed && (
+          {(!sidebarCollapsed || isMobile) && (
             <div className="flex items-center gap-2">
-              {/* <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
-                <Grid3X3 className="w-4 h-4 text-white" />
-              </div>
-              <span className="font-semibold text-blue-600">Jira</span> */}
+              {/* Logo can go here */}
             </div>
           )}
           <button
-            onClick={() => setSidebarCollapsed(!sidebarCollapsed)}
+            onClick={() => {
+              if (isMobile) {
+                setMobileMenuOpen(false);
+              } else {
+                setSidebarCollapsed(!sidebarCollapsed);
+              }
+            }}
             className="p-1 hover:bg-gray-100 rounded"
           >
-            {sidebarCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+            {(sidebarCollapsed && !isMobile) ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
           </button>
         </div>
 
-        {/* Navigation */}
         <nav className="flex-1 p-2">
           <div className="space-y-1">
             <div className="flex items-center gap-2 p-2 text-blue-600 bg-blue-50 rounded">
               <User className="w-4 h-4" />
-              {!sidebarCollapsed && <span className="text-sm">For you</span>}
+              {(!sidebarCollapsed || isMobile) && <span className="text-sm">For you</span>}
             </div>
 
             <button
@@ -758,7 +734,7 @@ const ProjectList = () => {
               onClick={() => toggleSection('recent')}
             >
               {expandedSections.recent ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
-              {!sidebarCollapsed && <span className="text-sm">Recent</span>}
+              {(!sidebarCollapsed || isMobile) && <span className="text-sm">Recent</span>}
             </button>
 
             <button
@@ -767,22 +743,22 @@ const ProjectList = () => {
             >
               {expandedSections.starred ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
               <Star className="w-4 h-4" />
-              {!sidebarCollapsed && <span className="text-sm">Starred</span>}
+              {(!sidebarCollapsed || isMobile) && <span className="text-sm">Starred</span>}
             </button>
 
             <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded">
               <Grid3X3 className="w-4 h-4" />
-              {!sidebarCollapsed && <span className="text-sm">Apps</span>}
+              {(!sidebarCollapsed || isMobile) && <span className="text-sm">Apps</span>}
             </div>
 
             <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded">
               <div className="w-4 h-4 bg-gray-300 rounded"></div>
-              {!sidebarCollapsed && <span className="text-sm">Projects</span>}
+              {(!sidebarCollapsed || isMobile) && <span className="text-sm">Projects</span>}
             </div>
           </div>
 
           {/* Recent Projects */}
-          {!sidebarCollapsed && (
+          {(!sidebarCollapsed || isMobile) && (
             <div className="mt-4">
               <div className="text-xs text-gray-500 mb-2 px-2">Recent</div>
               <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded">
@@ -798,188 +774,307 @@ const ProjectList = () => {
           <div className="mt-auto space-y-1">
             <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded">
               <Filter className="w-4 h-4" />
-              {!sidebarCollapsed && <span className="text-sm">Filters</span>}
+              {(!sidebarCollapsed || isMobile) && <span className="text-sm">Filters</span>}
             </div>
             <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded">
               <BarChart3 className="w-4 h-4" />
-              {!sidebarCollapsed && <span className="text-sm">Dashboards</span>}
+              {(!sidebarCollapsed || isMobile) && <span className="text-sm">Dashboards</span>}
             </div>
             <div className="flex items-center gap-2 p-2 hover:bg-gray-100 rounded">
               <Users className="w-4 h-4" />
-              {!sidebarCollapsed && <span className="text-sm">Teams</span>}
+              {(!sidebarCollapsed || isMobile) && <span className="text-sm">Teams</span>}
             </div>
           </div>
         </nav>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex flex-col">
+      <div className="flex-1 flex flex-col min-w-0">
         {/* Header */}
-        <header className="bg-white border-b px-6 py-3 border-gray-200">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <button className="p-1 hover:bg-gray-100 rounded">
-                <Menu className="w-5 h-5" />
-              </button>
+        <header className="bg-white border-b px-4 sm:px-6 py-3 border-gray-200">
+          {isMobile ? (
+            // Mobile Header Layout
+            <div className="space-y-3">
+              {/* Top row - Menu and Profile */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <button 
+                    className="p-1 hover:bg-gray-100 rounded"
+                    onClick={() => setMobileMenuOpen(true)}
+                  >
+                    <Menu className="w-5 h-5" />
+                  </button>
+                  <div className="flex items-center gap-2">
+                    <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
+                      <Grid3X3 className="w-4 h-4 text-white" />
+                    </div>
+                    <span className="font-semibold text-blue-600">Jira</span>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2">
+                  {/* Search button */}
+                  <button className="p-2 hover:bg-gray-100 rounded">
+                    <Search className="w-5 h-5" />
+                  </button>
+
+                  {/* Notification button */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setNotificationOpen(!notificationOpen)}
+                      className="p-2 hover:bg-gray-100 rounded relative"
+                    >
+                      <Bell className="w-5 h-5" />
+                      <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                        2
+                      </span>
+                    </button>
+                  </div>
+                  
+                  {/* Profile Menu */}
+                  <div className="relative">
+                    <button
+                      onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                      className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium"
+                    >
+                      J
+                    </button>
+
+                    {profileMenuOpen && (
+                      <div className="absolute right-0 top-12 w-72 bg-white rounded-lg shadow-xl border z-50 border-gray-200">
+                        <div className="p-4 border-b border-gray-200">
+                          <div className="flex items-center gap-3">
+                            <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium text-lg">
+                              J
+                            </div>
+                            <div className="min-w-0">
+                              <h3 className="font-medium">Jenil Savalia</h3>
+                              <p className="text-sm text-gray-600 truncate">jenil.savalia.cd@gmail.com</p>
+                            </div>
+                          </div>
+                        </div>
+
+                        <div className="py-2">
+                          <button className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 w-full text-left">
+                            <User className="w-4 h-4" />
+                            Profile
+                          </button>
+                          <button className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 w-full text-left">
+                            <Settings className="w-4 h-4" />
+                            Account settings
+                          </button>
+                          <button className="flex items-center justify-between px-4 py-2 hover:bg-gray-50 w-full text-left">
+                            <div className="flex items-center gap-3">
+                              <Palette className="w-4 h-4" />
+                              Theme
+                            </div>
+                            <ChevronRight className="w-4 h-4" />
+                          </button>
+                        </div>
+
+                        <div className="border-t py-2 border-gray-200">
+                          <div className="px-4 py-2 text-sm font-medium text-gray-700">Slack</div>
+                          <div className="px-4 py-2 text-sm font-medium text-gray-700">Assigned items</div>
+                        </div>
+
+                        <div className="border-t py-2 border-gray-200">
+                          <button className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 w-full text-left">
+                            <User className="w-4 h-4" />
+                            Switch account
+                          </button>
+                          <button className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 w-full text-left text-red-600">
+                            <LogOut className="w-4 h-4" />
+                            Log out
+                          </button>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </div>
+
+              {/* Bottom row - Create buttons */}
+              <div className="flex gap-3">
+                <button
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+                  onClick={() => setCreateProjectModalOpen(true)}
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Project</span>
+                </button>
+                <button
+                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+                  onClick={() => setCreateTaskModalOpen(true)}
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Task</span>
+                </button>
+              </div>
+            </div>
+          ) : (
+            // Desktop Header Layout
+            <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <div className="w-6 h-6 bg-blue-600 rounded flex items-center justify-center">
                   <Grid3X3 className="w-4 h-4 text-white" />
                 </div>
-                <span className="font-semibold text-blue-600">Jira</span>
+                <span className="font-semibold text-blue-600">SynergySphere</span>
               </div>
-            </div>
 
-            <div className="flex-1 max-w-md mx-8">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                <input
-                  type="text"
-                  placeholder="Search"
-                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                />
+              {/* Search - Hidden on mobile, shown on tablet+ */}
+              <div className="flex-1 max-w-md mx-4 sm:mx-8">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search"
+                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  />
+                </div>
               </div>
-            </div>
 
-            <div className="flex items-center gap-2">
-              <button
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                onClick={() => setCreateProjectModalOpen(true)}
-              >
-                <Plus className="w-4 h-4" />
-                Project
-              </button>
-              <button
-                className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-                onClick={() => setCreateTaskModalOpen(true)}
-              >
-                <Plus className="w-4 h-4" />
-                Task
-              </button>
-
-              <div className="relative">
+              <div className="flex items-center gap-2">
+                {/* Create buttons */}
                 <button
-                  onClick={() => setNotificationOpen(!notificationOpen)}
-                  className="p-2 hover:bg-gray-100 rounded relative"
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+                  onClick={() => setCreateProjectModalOpen(true)}
                 >
-                  <Bell className="w-5 h-5" />
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
-                    2
-                  </span>
+                  <Plus className="w-4 h-4" />
+                  <span>Project</span>
                 </button>
-              </div>
-              
-              {/* Profile Menu */}
-              <div className="relative">
                 <button
-                  onClick={() => setProfileMenuOpen(!profileMenuOpen)}
-                  className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium"
+                  className="flex items-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+                  onClick={() => setCreateTaskModalOpen(true)}
                 >
-                  J
+                  <Plus className="w-4 h-4" />
+                  <span>Task</span>
                 </button>
 
-                {profileMenuOpen && (
-                  <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-xl border z-50 border-gray-200">
-                    <div className="p-4 border-b border-gray-200">
-                      <div className="flex items-center gap-3">
-                        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium text-lg">
-                          J
-                        </div>
-                        <div>
-                          <h3 className="font-medium">Jenil Savalia</h3>
-                          <p className="text-sm text-gray-600">jenil.savalia.cd@gmail.com</p>
+                <div className="relative">
+                  <button
+                    onClick={() => setNotificationOpen(!notificationOpen)}
+                    className="p-2 hover:bg-gray-100 rounded relative"
+                  >
+                    <Bell className="w-5 h-5" />
+                    <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                      2
+                    </span>
+                  </button>
+                </div>
+                
+                {/* Profile Menu */}
+                <div className="relative">
+                  <button
+                    onClick={() => setProfileMenuOpen(!profileMenuOpen)}
+                    className="w-8 h-8 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium"
+                  >
+                    J
+                  </button>
+
+                  {profileMenuOpen && (
+                    <div className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-xl border z-50 border-gray-200">
+                      <div className="p-4 border-b border-gray-200">
+                        <div className="flex items-center gap-3">
+                          <div className="w-12 h-12 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 flex items-center justify-center text-white font-medium text-lg">
+                            J
+                          </div>
+                          <div className="min-w-0">
+                            <h3 className="font-medium">Jenil Savalia</h3>
+                            <p className="text-sm text-gray-600 truncate">jenil.savalia.cd@gmail.com</p>
+                          </div>
                         </div>
                       </div>
-                    </div>
 
-                    <div className="py-2">
-                      <button className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 w-full text-left">
-                        <User className="w-4 h-4" />
-                        Profile
-                      </button>
-                      <button className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 w-full text-left">
-                        <Settings className="w-4 h-4" />
-                        Account settings
-                      </button>
-                      <button className="flex items-center justify-between px-4 py-2 hover:bg-gray-50 w-full text-left">
-                        <div className="flex items-center gap-3">
-                          <Palette className="w-4 h-4" />
-                          Theme
-                        </div>
-                        <ChevronRight className="w-4 h-4" />
-                      </button>
-                    </div>
+                      <div className="py-2">
+                        <button className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 w-full text-left">
+                          <User className="w-4 h-4" />
+                          Profile
+                        </button>
+                        <button className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 w-full text-left">
+                          <Settings className="w-4 h-4" />
+                          Account settings
+                        </button>
+                        <button className="flex items-center justify-between px-4 py-2 hover:bg-gray-50 w-full text-left">
+                          <div className="flex items-center gap-3">
+                            <Palette className="w-4 h-4" />
+                            Theme
+                          </div>
+                          <ChevronRight className="w-4 h-4" />
+                        </button>
+                      </div>
 
-                    <div className="border-t py-2 border-gray-200">
-                      <div className="px-4 py-2 text-sm font-medium text-gray-700">Slack</div>
-                      <div className="px-4 py-2 text-sm font-medium text-gray-700">Assigned items</div>
-                    </div>
+                      <div className="border-t py-2 border-gray-200">
+                        <div className="px-4 py-2 text-sm font-medium text-gray-700">Slack</div>
+                        <div className="px-4 py-2 text-sm font-medium text-gray-700">Assigned items</div>
+                      </div>
 
-                    <div className="border-t py-2 border-gray-200">
-                      <button className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 w-full text-left">
-                        <User className="w-4 h-4" />
-                        Switch account
-                      </button>
-                      <button className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 w-full text-left text-red-600">
-                        <LogOut className="w-4 h-4" />
-                        Log out
-                      </button>
+                      <div className="border-t py-2 border-gray-200">
+                        <button className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 w-full text-left">
+                          <User className="w-4 h-4" />
+                          Switch account
+                        </button>
+                        <button className="flex items-center gap-3 px-4 py-2 hover:bg-gray-50 w-full text-left text-red-600">
+                          <LogOut className="w-4 h-4" />
+                          Log out
+                        </button>
+                      </div>
                     </div>
-                  </div>
-                )}
+                  )}
+                </div>
               </div>
             </div>
-          </div>
+          )}
         </header>
 
         {/* Main Content Area */}
-        <main className="flex-1 p-6 overflow-y-auto">
+        <main className="flex-1 p-4 sm:p-6 overflow-y-auto">
           <div className="max-w-7xl mx-auto">
-            <h1 className="text-2xl font-semibold mb-6">For you</h1>
+            <h1 className="text-xl sm:text-2xl font-semibold mb-4 sm:mb-6">For you</h1>
 
             {/* Recent Projects */}
-            <div className="mb-8">
-              <div className="flex items-center justify-between mb-4">
+            <div className="mb-6 sm:mb-8">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between mb-4 gap-2">
                 <h2 className="text-lg font-medium">Recent projects</h2>
-                <button className="text-blue-600 hover:underline text-sm">
+                <button className="text-blue-600 hover:underline text-sm self-start sm:self-auto">
                   View all projects
                 </button>
               </div>
 
-              {/* Grid for projects */}
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+              {/* Responsive Grid */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
                 {projects.map((project) => (
                   <div
                     key={project.id}
-                    className="bg-white rounded-lg border p-6 border-gray-200"
+                    className="bg-white rounded-lg border p-4 sm:p-6 border-gray-200 hover:shadow-md transition-shadow"
                   >
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-red-500 rounded flex items-center justify-center">
-                        <div className="w-6 h-6 bg-white rounded flex items-center justify-center">
-                          <div className="w-3 h-3 bg-red-500 rounded"></div>
+                    <div className="flex items-start gap-3 sm:gap-4">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-500 rounded flex items-center justify-center flex-shrink-0">
+                        <div className="w-5 h-5 sm:w-6 sm:h-6 bg-white rounded flex items-center justify-center">
+                          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-red-500 rounded"></div>
                         </div>
                       </div>
-                      <div className="flex-1">
-                        <h3 className="font-medium mb-1">{project.title}</h3>
-                        <p className="text-sm text-gray-600 mb-4">{project.type}</p>
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-medium mb-1 text-sm sm:text-base truncate">{project.title}</h3>
+                        <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">{project.type}</p>
 
-                        <div className="mb-4">
-                          <h4 className="text-sm font-medium text-gray-700 mb-2">
+                        <div className="mb-3 sm:mb-4">
+                          <h4 className="text-xs sm:text-sm font-medium text-gray-700 mb-2">
                             Quick links
                           </h4>
                           <div className="space-y-1">
-                            <div className="flex items-center justify-between text-sm">
-                              <span>My open work items</span>
-                              <span className="text-gray-500">{project.openItems}</span>
+                            <div className="flex items-center justify-between text-xs sm:text-sm">
+                              <span className="truncate pr-2">My open work items</span>
+                              <span className="text-gray-500 flex-shrink-0">{project.openItems}</span>
                             </div>
-                            <div className="text-sm text-gray-600">
+                            <div className="text-xs sm:text-sm text-gray-600">
                               Done work items: {project.doneItems}
                             </div>
                           </div>
                         </div>
 
                         <div className="flex items-center gap-2">
-                          <span className="text-sm">1 board</span>
-                          <ChevronDown className="w-4 h-4" />
+                          <span className="text-xs sm:text-sm">1 board</span>
+                          <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
                         </div>
                       </div>
                     </div>
@@ -987,45 +1082,28 @@ const ProjectList = () => {
                 ))}
               </div>
             </div>
-
-
-            {/* Tabs */}
-            {/* <div className="border-b mb-6">
-              <div className="flex gap-6">
-                <button className="pb-3 border-b-2 border-blue-600 text-blue-600 font-medium">Worked on</button>
-                <button className="pb-3 text-gray-600 hover:text-gray-900">Viewed</button>
-                <div className="flex items-center gap-2">
-                  <button className="pb-3 text-gray-600 hover:text-gray-900">Assigned to me</button>
-                  <span className="bg-gray-200 text-gray-700 text-xs px-2 py-1 rounded">0</span>
-                </div>
-                <button className="pb-3 text-gray-600 hover:text-gray-900">Starred</button>
-                <button className="pb-3 text-gray-600 hover:text-gray-900">Boards</button>
-              </div>
-            </div> */}
-
-            {/* Illustration */}
-            {/* <div className="flex justify-center">
-              <div className="text-center">
-                <div className="w-64 h-48 mx-auto mb-4 bg-gradient-to-br from-orange-400 via-yellow-400 to-blue-400 rounded-lg flex items-center justify-center">
-                  <div className="text-6xl">📊</div>
-                </div>
-              </div>
-            </div> */}
           </div>
         </main>
       </div>
 
-      {/* Create Task Modal */}
+      {/* Modals */}
       <CreateProjectModal />
       <CreateTaskModal />
       {notificationOpen && <NotificationPanel />}
-
 
       {/* Click outside to close profile menu */}
       {profileMenuOpen && (
         <div
           className="fixed inset-0 z-40"
           onClick={() => setProfileMenuOpen(false)}
+        />
+      )}
+
+      {/* Click outside to close notifications */}
+      {notificationOpen && (
+        <div
+          className="fixed inset-0 z-40"
+          onClick={() => setNotificationOpen(false)}
         />
       )}
     </div>
