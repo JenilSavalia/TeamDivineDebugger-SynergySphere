@@ -418,7 +418,7 @@ const ProjectList = () => {
                 <button className="text-blue-600 hover:underline text-sm">View all projects</button>
               </div>
 
-              <div className="bg-white rounded-lg border p-6">
+              <div className="bg-white rounded-lg border p-6 w-[400px]">
                 <div className="flex items-start gap-4">
                   <div className="w-12 h-12 bg-red-500 rounded flex items-center justify-center">
                     <div className="w-6 h-6 bg-white rounded flex items-center justify-center">
