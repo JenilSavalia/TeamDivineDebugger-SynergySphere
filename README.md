@@ -1,6 +1,6 @@
 # 🌐 SynergySphere – Advanced Team Collaboration Platform
 
-![SynergySphere Banner](./banner4x.png)
+![SynergySphere Banner](./bannerNEW.png)
 
 ---
 
