@@ -144,10 +144,6 @@ Prepare to be amazed by the powerhouse technologies behind SynergySphere!
 
 ---
 
-## 📄 License
-
-This project is licensed under **\[Insert License Here]**.
-
 ---
 
 > SynergySphere brings **intelligent collaboration, intuitive task management, and seamless communication** together in a single platform—designed to let teams operate at their absolute best.
