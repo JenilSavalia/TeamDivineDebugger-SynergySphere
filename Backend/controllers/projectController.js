@@ -67,6 +67,62 @@ export const createProject = async (req, res) => {
   }
 };
 
+// 
+export const addMembersToProject = async (req, res) => {
+  try {
+    const { projectId } = req.params;
+    const { userId, memberIds } = req.body; // userId = the one trying to add members
+
+    // 1️⃣ Get the user who is trying to add members
+    const user = await prisma.user.findUnique({ where: { id: userId } });
+
+    if (!user) {
+      return res.status(404).json({ success: false, message: 'User not found' });
+    }
+
+    // 2️⃣ Check if user is a manager
+    if (user.role !== 'PROJECT_MANAGER') {
+      return res.status(403).json({ success: false, message: 'Only managers can add members' });
+    }
+
+    // 3️⃣ Verify the project exists
+    const project = await prisma.project.findUnique({ where: { id: projectId } });
+    if (!project) {
+      return res.status(404).json({ success: false, message: 'Project not found' });
+    }
+
+    // 4️⃣ Add members to the project (many-to-many via ProjectMember)
+    const addedMembers = [];
+    for (const memberId of memberIds) {
+      // Check if member exists
+      const member = await prisma.user.findUnique({ where: { id: memberId } });
+      if (member) {
+        const alreadyMember = await prisma.projectMember.findFirst({
+          where: { projectId, userId: memberId }
+        });
+        if (!alreadyMember) {
+          const newMember = await prisma.projectMember.create({
+            data: {
+              projectId,
+              userId: memberId
+            }
+          });
+          addedMembers.push(newMember);
+        }
+      }
+    }
+
+    res.status(200).json({
+      success: true,
+      message: 'Members added successfully',
+      data: addedMembers
+    });
+
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ success: false, message: 'Internal server error', error: error.message });
+  }
+};
 
 
 // @desc    Get all projects
