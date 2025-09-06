@@ -91,7 +91,6 @@ Prepare to be amazed by the powerhouse technologies behind SynergySphere!
 | Frontend         | React (SPA) with TailwindCSS for stunning UI    | [React](https://reactjs.org/) / [TailwindCSS](https://tailwindcss.com/) |
 | Backend          | Node.js + Express.js for scalable APIs          | [Node.js](https://nodejs.org/) / [Express.js](https://expressjs.com/)   |
 | Database         | PostgreSQL for high-performance relational data | [PostgreSQL](https://www.postgresql.org/)                               |
-| Caching          | Redis for lightning-fast responses              | [Redis](https://redis.io/)                                              |
 | Containerization | Docker ensures seamless deployment              | [Docker](https://www.docker.com/)                                       |
 | Version Control  | Git for robust version management               | [Git](https://git-scm.com/)                                             |
 | Authentication   | JWT for secure, token-based auth                | [JWT](https://jwt.io/)                                                  |
