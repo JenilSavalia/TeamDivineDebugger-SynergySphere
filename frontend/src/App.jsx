@@ -11,6 +11,7 @@ import Dashboard from './pages/Dashboard/Dashboard'
 import Resetpass from './pages/auth/Resetpass'
 import Navbar from './pages/Navbar/Navbar'
 import ProjectList from './pages/ProjectList/ProjectList'
+import ProtectedRoute from './utils/ProtectedRoute';
 
 function App() {
   const [count, setCount] = useState(0)
@@ -28,8 +29,23 @@ function App() {
             <Route path='verify-otp' element={<VerifyOTP />} />
             <Route path='reset-password/:token' element={<Resetpass />} />
           </Route>
-          <Route path='/dashboard' element={<ProjectList />} />
-          <Route path='/dashboard/:id' element={<Dashboard />} />
+          {/* Protected Routes */}
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={['PROJECT_MANAGER', 'PROJECT_MEMBER']}>
+                <ProjectList />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/dashboard/:id"
+            element={
+              <ProtectedRoute allowedRoles={['PROJECT_MANAGER', 'PROJECT_MEMBER']}>
+                <Dashboard />
+              </ProtectedRoute>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </>
