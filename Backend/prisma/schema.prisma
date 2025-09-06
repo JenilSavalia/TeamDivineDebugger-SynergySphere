@@ -32,3 +32,39 @@ enum Role {
   PROJECT_MANAGER
   PROJECT_MEMBER
 }
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // User can manage multiple projects
+  managedProjects Project[] @relation("ProjectManager")
+  
+  @@map("users")
+}
+
+model Project {
+  id          String      @id @default(cuid())
+  name        String
+  tags        String[]
+  deadline    DateTime
+  priority    Priority    @default(MEDIUM)
+  image       String
+  description String      @db.Text
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  projectManagerId String?   // <-- make it optional
+  projectManager   User?     @relation("ProjectManager", fields: [projectManagerId], references: [id], onDelete: Cascade)
+  @@map("projects")
+}
+
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
