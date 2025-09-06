@@ -34,17 +34,17 @@ function App() {
           <Route
             path="/dashboard"
             element={
-              <ProtectedRoute allowedRoles={['PROJECT_MANAGER', 'PROJECT_MEMBER']}>
+              // <ProtectedRoute allowedRoles={['PROJECT_MANAGER', 'PROJECT_MEMBER']}>
                 <ProjectList />
-              </ProtectedRoute> 
+              // </ProtectedRoute> 
             }
           />
           <Route
             path="/dashboard/:id"
             element={
-              <ProtectedRoute allowedRoles={['PROJECT_MANAGER', 'PROJECT_MEMBER']}>
+              // <ProtectedRoute allowedRoles={['PROJECT_MANAGER', 'PROJECT_MEMBER']}>
                 <Dashboard />
-              </ProtectedRoute>
+              // </ProtectedRoute>
             }
           />
         </Routes>
