@@ -13,12 +13,47 @@ import {
   Zap,
   AlertTriangle, Clock, Check
 } from 'lucide-react';
+import { useParams } from 'react-router-dom';
+
 
 import ProjectSummary from './ProjectSummary'
+
+
 
 const Dashboard = () => {
   const [selectedView, setSelectedView] = useState('Summary');
   const [selectedTimeRange, setSelectedTimeRange] = useState('Months');
+
+  const { id } = useParams();
+
+  const proj = [{
+    id: 1,
+    title: '2025 AIP Systems Development',
+    type: 'Team-managed business',
+    openItems: 0,
+    doneItems: 5,
+  },
+  {
+    id: 2,
+    title: 'UI Revamp Q2',
+    type: 'Design initiative',
+    openItems: 3,
+    doneItems: 10,
+  },
+  {
+    id: 3,
+    title: 'API Integration Phase 1',
+    type: 'Development sprint',
+    openItems: 1,
+    doneItems: 7,
+  },
+  {
+    id: 4,
+    title: 'Customer Feedback Portal',
+    type: 'Product feature',
+    openItems: 2,
+    doneItems: 4,
+  }]
 
   const milestones = [
     {
@@ -440,7 +475,8 @@ const Dashboard = () => {
                   <div className="w-8 h-8 bg-red-500 rounded flex items-center justify-center">
                     <span className="text-white font-bold text-sm">T</span>
                   </div>
-                  <h1 className="text-2xl font-semibold">2025 TermScout Development</h1>
+                  {console.log(proj.find(x => x.id == id).title)}
+                  <h1 className="text-2xl font-semibold">{proj.find(x => x.id == id).title}</h1>
                   <div className="flex items-center space-x-2">
                     <button className="p-1 hover:bg-gray-100 rounded">
                       <MoreHorizontal className="w-5 h-5 text-gray-500" />

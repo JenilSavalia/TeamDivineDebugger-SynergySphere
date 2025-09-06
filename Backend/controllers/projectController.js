@@ -135,7 +135,7 @@ export const getAllProjects = async (req, res) => {
         projectManager: {
           select: {
             id: true,
-            name: true,
+            username: true,
             email: true
           }
         }
