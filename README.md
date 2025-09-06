@@ -41,13 +41,7 @@ It’s a **desktop and mobile-ready collaboration platform** designed to be the 
 ![Mobile Dashboard](./responsive-design.png)
 
 **Project Detail View:**
-![Project Detail](./assets/project-detail.png)
-
-**Task Board View:**
-![Task Board](./assets/task-board.png)
-
-**Notifications & Communication:**
-![Notifications](./assets/notifications.png)
+![Project Detail](./project-board.png)
 
 ---
 
