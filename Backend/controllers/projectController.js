@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client';
+import redis from '../utils/redisClient.js';
 
 const prisma = new PrismaClient();
 
@@ -50,6 +51,8 @@ export const createProject = async (req, res) => {
         }
       }
     });
+
+    await redis.del("all_projects"); // clear cache when data changes
 
     res.status(201).json({
       success: true,
@@ -111,7 +114,7 @@ export const addMembersToProject = async (req, res) => {
         }
       }
     }
-
+    
     res.status(200).json({
       success: true,
       message: 'Members added successfully',
@@ -128,38 +131,59 @@ export const addMembersToProject = async (req, res) => {
 // @desc    Get all projects
 // @route   GET /api/projects
 // @access  Public
+
 export const getAllProjects = async (req, res) => {
   try {
+    // 1. Check Redis cache first
+    const cachedProjects = await redis.get("all_projects");
+    if (cachedProjects) {
+      console.log("📦 Cache hit: Returning projects from Redis");
+
+      return res.json({
+        success: true,
+        message: "Projects retrieved successfully (from cache)",
+        data: JSON.parse(cachedProjects),
+        count: JSON.parse(cachedProjects).length,
+      });
+    }
+
+    console.log("💾 Cache miss: Fetching projects from DB");
+
+    // 2. Fetch from DB if cache miss
     const projects = await prisma.project.findMany({
       include: {
         projectManager: {
           select: {
             id: true,
             username: true,
-            email: true
-          }
-        }
+            email: true,
+          },
+        },
       },
-      orderBy: {
-        createdAt: 'desc'
-      }
+      orderBy: { createdAt: "desc" },
     });
 
+    // 3. Store result in Redis (expires in 60s)
+    await redis.set("all_projects", JSON.stringify(projects), "EX", 60);
+
+    // 4. Return response
     res.json({
       success: true,
-      message: 'Projects retrieved successfully',
+      message: "Projects retrieved successfully (from DB)",
       data: projects,
-      count: projects.length
+      count: projects.length,
     });
-
   } catch (error) {
-    console.error('Get projects error:', error);
+    console.error("❌ Get projects error:", error);
+
     res.status(500).json({
       success: false,
-      message: 'Failed to retrieve projects'
+      message: "Failed to retrieve projects",
+      error: process.env.NODE_ENV === "development" ? error.message : undefined,
     });
   }
 };
+
 
 // @desc    Get project by ID
 // @route   GET /api/projects/:id
