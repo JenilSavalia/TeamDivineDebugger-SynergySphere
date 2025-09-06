@@ -43,6 +43,10 @@ It’s a **desktop and mobile-ready collaboration platform** designed to be the 
 **Project Detail View:**
 ![Project Detail](./project-board.png)
 
+**Project Summary View:**
+![Project Detail](./overview.png)
+
+
 ---
 
 
