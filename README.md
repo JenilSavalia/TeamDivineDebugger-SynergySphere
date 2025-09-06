@@ -1,1 +1,178 @@
 # TeamDivineDebugger-SynergySphere
+# 🌐 SynergySphere – Advanced Team Collaboration Platform
+
+![SynergySphere Banner](./assets/banner.png)
+
+---
+
+## 🚀 Table of Contents
+
+* [Project Overview](#project-overview)
+* [Problem Statement](#problem-statement)
+* [Proposed Solution](#proposed-solution)
+* [Key Features](#key-features)
+* [Technical Stack](#technical-stack)
+* [Architecture](#architecture)
+* [Screenshots & GIFs](#screenshots--gifs)
+* [Setup Instructions](#setup-instructions)
+* [Contribution Guidelines](#contribution-guidelines)
+* [License](#license)
+
+---
+
+## 🌟 Project Overview
+
+**SynergySphere** is built on a simple idea: **teams do their best work when their tools truly support how they think, communicate, and move forward together.**
+
+It’s a **desktop and mobile-ready collaboration platform** designed to be the intelligent backbone for teams, helping them stay organized, communicate better, manage resources efficiently, and make informed decisions—proactively, not reactively.
+
+**Goals:**
+
+* Enable seamless **project and task management**.
+* Provide **real-time team communication** and collaboration.
+* Act as a **command center** for tracking progress and resources.
+* Deliver a **smooth, intuitive, and responsive experience** for both mobile and desktop users.
+
+---
+
+## 🛑 Problem Statement
+
+Teams across all domains face the same persistent headaches:
+
+* **Scattered Information:** Files, chats, and decisions are spread across multiple platforms.
+* **Unclear Progress:** Task and project visibility is limited.
+* **Resource Overload or Confusion:** Team members are often overworked or unsure of priorities.
+* **Deadline Surprises:** Issues are discovered too late.
+* **Communication Gaps:** Messages get lost in emails or scattered chats.
+
+**SynergySphere** addresses these pain points by orchestrating collaboration **intelligently and proactively**, ensuring teams work smarter and stay aligned.
+
+---
+
+## 💡 Proposed Solution
+
+SynergySphere transforms team collaboration by combining **task management**, **team communication**, and **proactive insights** in one platform.
+
+**Highlights:**
+
+* **Dynamic Task Management:** Create, assign, and track tasks with statuses like To-Do, In Progress, and Done.
+* **Project-Specific Communication:** Threaded discussions keep conversations organized.
+* **User & Resource Management:** Add members, assign responsibilities, and balance workloads.
+* **Real-Time Updates:** Notifications for tasks, deadlines, and team activities.
+* **Mobile & Desktop Ready:** Seamless experience across devices.
+* **Data-Efficient Design:** Stable and responsive even with multiple projects and teams.
+
+---
+
+## 🔑 Key Features
+
+* **User Authentication:** Secure login and registration.
+* **Project Dashboard:** List, create, and manage projects effortlessly.
+* **Task Management:** Assign tasks with due dates, status tracking, and priority indicators.
+* **Team Collaboration:** Threaded discussions for each project.
+* **Progress Visualization:** Intuitive task boards and status charts.
+* **Notifications:** Alerts for important updates and deadlines.
+* **Responsive UI:** Optimized for mobile and desktop interfaces.
+
+---
+
+## 🛠 Technical Stack
+
+| Layer            | Technology                             |
+| ---------------- | -------------------------------------- |
+| Frontend         | React (SPA)                            |
+| Backend          | Node.js, Express.js                    |
+| Database         | PostgreSQL                             |
+| Caching          | Redis                                  |
+| Containerization | Docker                                 |
+| Version Control  | Git                                    |
+| Others           | JWT Auth, Date-Fns, Axios, TailwindCSS |
+
+---
+
+## 🏗 Architecture
+
+**SynergySphere follows a modular, scalable architecture:**
+
+* **Frontend (React SPA):** Handles responsive UI and interactions.
+* **Backend (Node.js + Express):** Manages business logic and database communication.
+* **Database (PostgreSQL):** Optimized for relational data efficiency.
+* **Caching (Redis):** Fast retrieval for frequent queries.
+* **Docker:** Ensures consistent deployment across platforms.
+
+![Architecture Diagram](./assets/architecture.png)
+
+---
+
+## 📸 Screenshots & GIFs
+
+**Mobile Dashboard:**
+![Mobile Dashboard](./assets/mobile-dashboard.png)
+
+**Project Detail View:**
+![Project Detail](./assets/project-detail.png)
+
+**Task Board View:**
+![Task Board](./assets/task-board.png)
+
+**Notifications & Communication:**
+![Notifications](./assets/notifications.png)
+
+---
+
+## ⚙️ Setup Instructions
+
+### Prerequisites
+
+* Node.js >= 18.x
+* PostgreSQL >= 14.x
+* Docker >= 24.x
+
+### Installation Steps
+
+```bash
+# Clone the repository
+git clone [repository-url]
+cd synergy-sphere
+
+# Backend setup
+cd backend
+npm install
+
+# Frontend setup
+cd ../frontend
+npm install
+
+# Setup PostgreSQL database
+CREATE DATABASE synergy_sphere;
+
+# Configure .env file with database and Redis credentials
+
+# Run Docker containers
+docker-compose up --build
+
+# Start backend server
+npm run dev
+
+# Start frontend server
+npm start
+```
+
+---
+
+## 🤝 Contribution Guidelines
+
+* Follow **feature branching** and **frequent commits**.
+* Maintain **clean, modular, and well-documented code**.
+* Collaborate on **testing, bug fixes, and UI improvements**.
+* Share ownership and foster **team synergy**!
+
+---
+
+## 📄 License
+
+This project is licensed under **\[Insert License Here]**.
+
+---
+
+> SynergySphere brings **intelligent collaboration, intuitive task management, and seamless communication** together in a single platform—designed to let teams operate at their absolute best.
