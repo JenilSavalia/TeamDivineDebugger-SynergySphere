@@ -65,6 +65,33 @@ model Project {
   @@map("projects")
 }
 
+model Task {
+  id          String     @id @default(cuid())
+  name        String
+  tags        String[]
+  deadline    DateTime
+  image       String
+  description String     @db.Text
+  status      TaskStatus @default(TODO)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Foreign key relationships
+  assigneeId String?    // <-- optional now
+  assignee   User?      @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: Cascade)
+
+  projectId String
+  project   Project     @relation("ProjectTasks", fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("tasks")
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
+}
+
 // Join table for many-to-many relation between Users and Projects
 
 model ProjectMember {
