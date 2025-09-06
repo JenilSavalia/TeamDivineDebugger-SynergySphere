@@ -16,44 +16,37 @@ model OTP {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-enum Priority {
-  LOW
-  MEDIUM
-  HIGH
-}
-
-enum Role {
-  PROJECT_MANAGER
-  PROJECT_MEMBER
-}
 
 model User {
-  id        String   @id @default(uuid())
-  username  String
-  email     String   @unique
-  password  String
-  role      Role     @default(PROJECT_MEMBER)
-  isVerified Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  id         String   @id @default(uuid())
+  username   String
+  email      String   @unique
+  password   String
+  role       Role     @default(PROJECT_MEMBER)
+  isVerified Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 
-  // Projects this user manages (if role = PROJECT_MANAGER)
+  // Projects this user manages
   managedProjects Project[] @relation("ProjectManager")
 
   // Projects this user is a member of
-  memberProjects  ProjectMember[]
+  memberProjects ProjectMember[]
+
+  // Tasks assigned to this user
+  assignedTasks Task[] @relation("TaskAssignee")
 }
 
 model Project {
-  id          String      @id @default(cuid())
+  id          String   @id @default(cuid())
   name        String
   tags        String[]
   deadline    DateTime
-  priority    Priority    @default(MEDIUM)
+  priority    Priority @default(MEDIUM)
   image       String
-  description String      @db.Text
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  description String   @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 
   // Manager of this project
   projectManager   User?   @relation("ProjectManager", fields: [projectManagerId], references: [id], onDelete: Cascade)
@@ -62,17 +55,56 @@ model Project {
   // Members of this project
   members ProjectMember[]
 
+  // Tasks in this project
+  tasks Task[] @relation("ProjectTasks")
+
   @@map("projects")
 }
 
-// Join table for many-to-many relation between Users and Projects
+model Task {
+  id          String     @id @default(cuid())
+  name        String
+  tags        String[]
+  deadline    DateTime
+  description String     @db.Text
+  status      TaskStatus @default(TODO)
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  // Assignee relation
+  assigneeId String?
+  assignee   User?   @relation("TaskAssignee", fields: [assigneeId], references: [id], onDelete: Cascade)
+
+  // Project relation
+  projectId String
+  project   Project @relation("ProjectTasks", fields: [projectId], references: [id], onDelete: Cascade)
+
+  @@map("tasks")
+}
 
 model ProjectMember {
   id        String   @id @default(cuid())
-  project   Project  @relation(fields: [projectId], references: [id])
   projectId String
-  user      User     @relation(fields: [userId], references: [id])
   userId    String
-
   joinedAt  DateTime @default(now())
+
+  project Project @relation(fields: [projectId], references: [id])
+  user    User    @relation(fields: [userId], references: [id])
+}
+
+enum Role {
+  PROJECT_MANAGER
+  PROJECT_MEMBER
+}
+
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum TaskStatus {
+  TODO
+  IN_PROGRESS
+  DONE
 }
