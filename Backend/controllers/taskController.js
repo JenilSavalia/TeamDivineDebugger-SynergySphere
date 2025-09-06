@@ -1,45 +1,84 @@
-import prisma from '../prismaClient.js';
+import pkg from '@prisma/client';
+const { PrismaClient, TaskStatus } = pkg;
 
+const prisma = new PrismaClient();
 // @desc    Create new task
 // @route   POST /api/tasks
 // @access  Public
 export const createTask = async (req, res) => {
   try {
-    const { name, assigneeId, projectId, tags, deadline, description, status } = req.validatedData;
+    const { name, assigneeId, projectId, tags, deadline, description, status } = req.body;
 
-    // Handle image upload
-    let imageUrl = req.validatedData.image; // If image URL is provided
-    if (req.file) {
-      imageUrl = `/uploads/tasks/${req.file.filename}`;
+    // Validate required fields
+    if (!name || !projectId || !deadline) {
+      return res.status(400).json({ success: false, message: "Name, projectId and deadline are required" });
     }
 
-    // Check if assignee exists
-    const assignee = await prisma.user.findUnique({ where: { id: assigneeId } });
-    if (!assignee) return res.status(404).json({ success: false, message: 'Assignee not found' });
+    // Validate deadline
+    const deadlineDate = new Date(deadline);
+    if (isNaN(deadlineDate.getTime())) {
+      return res.status(400).json({ success: false, message: "Invalid deadline date" });
+    }
 
-    // Check if project exists
+    // Handle image upload
+    // let imageUrl = req.body.image || null;
+    // if (req.file) {
+    //   imageUrl = `/uploads/tasks/${req.file.filename}`;
+    // }
+
+    // Check project exists
     const project = await prisma.project.findUnique({ where: { id: projectId } });
-    if (!project) return res.status(404).json({ success: false, message: 'Project not found' });
+    if (!project) {
+      return res.status(404).json({ success: false, message: "Project not found" });
+    }
+
+    // If assignee is provided, check if user exists
+    if (assigneeId) {
+      const assignee = await prisma.user.findUnique({ where: { id: assigneeId } });
+      if (!assignee) {
+        return res.status(404).json({ success: false, message: "Assignee not found" });
+      }
+    }
+
+    // Validate status (fallback = TODO)
+    const validStatus = status && Object.values(TaskStatus).includes(status) ? status : TaskStatus.TODO;
 
     // Create task
     const task = await prisma.task.create({
-      data: { name, assigneeId, projectId, tags, deadline: new Date(deadline), image: imageUrl, description, status: status || 'TODO' },
+      data: {
+        name,
+        assignee: { connect: { id: assigneeId } },  // ✅ connect to user
+        project: { connect: { id: projectId } },
+        tags,
+        deadline: deadlineDate,
+        // image: imageUrl,
+        description,
+        status: validStatus
+      },
       include: {
-        assignee: { select: { id: true, name: true, email: true } },
+        assignee: { select: { id: true, username: true, email: true } },
         project: {
           select: {
             id: true,
             name: true,
-            projectManager: { select: { id: true, name: true, email: true } }
+            projectManager: { select: { id: true, username: true, email: true } }
           }
         }
       }
     });
 
-    res.status(201).json({ success: true, message: 'Task created successfully', data: task });
+    res.status(201).json({
+      success: true,
+      message: "Task created successfully",
+      data: task
+    });
   } catch (error) {
-    console.error('Create task error:', error);
-    res.status(500).json({ success: false, message: 'Failed to create task', error: process.env.NODE_ENV === 'development' ? error.message : 'Internal server error' });
+    console.error("Create task error:", error);
+    res.status(500).json({
+      success: false,
+      message: "Failed to create task",
+      error: process.env.NODE_ENV === "development" ? error.message : "Internal server error"
+    });
   }
 };
 

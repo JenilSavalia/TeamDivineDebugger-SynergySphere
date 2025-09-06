@@ -7,6 +7,7 @@ import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import projectRoutes from './routes/projectRoute.js';
 import { errorHandler, notFound } from './middleware/errorMiddleware.js';
+import taskRoutes from './routes/taskRoute.js';
 
 dotenv.config();
 
@@ -48,6 +49,7 @@ app.use('/uploads', express.static('uploads'));
 
 // Routes
 app.use('/api/projects', projectRoutes);
+app.use('/api/tasks', taskRoutes);
 
 // Health Check
 app.get('/api/health', (req, res) => {

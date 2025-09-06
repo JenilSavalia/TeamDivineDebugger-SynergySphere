@@ -8,13 +8,13 @@ import {
   getTasksByAssignee,
   updateTaskStatus
 } from '../controllers/taskController.js';
-import { validateTask } from '../middleware/validation.js';
-import upload from '../middleware/upload.js';
+// import { validateTask } from '../middleware/validation.js';
+// import upload from '../middleware/upload.js';
 
 const router = express.Router();
 
 // Create task (with optional image upload)
-router.post('/', upload.single('image'), validateTask, createTask);
+router.post('/', createTask);
 
 // Get all tasks
 router.get('/', getAllTasks);
