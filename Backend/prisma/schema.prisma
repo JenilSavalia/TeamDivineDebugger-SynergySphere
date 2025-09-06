@@ -7,17 +7,6 @@ generator client {
   provider = "prisma-client-js"
 }
 
-model User {
-  id        String   @id @default(uuid())
-  username  String
-  email     String   @unique
-  password  String
-  role      Role     @default(PROJECT_MEMBER)
-  isVerified Boolean @default(false)
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-}
-
 model OTP {
   id        String   @id @default(uuid())
   email     String   @unique
@@ -27,8 +16,63 @@ model OTP {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+enum Priority {
+  LOW
+  MEDIUM
+  HIGH
+}
 
 enum Role {
   PROJECT_MANAGER
   PROJECT_MEMBER
+}
+
+model User {
+  id        String   @id @default(uuid())
+  username  String
+  email     String   @unique
+  password  String
+  role      Role     @default(PROJECT_MEMBER)
+  isVerified Boolean @default(false)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Projects this user manages (if role = PROJECT_MANAGER)
+  managedProjects Project[] @relation("ProjectManager")
+
+  // Projects this user is a member of
+  memberProjects  ProjectMember[]
+}
+
+model Project {
+  id          String      @id @default(cuid())
+  name        String
+  tags        String[]
+  deadline    DateTime
+  priority    Priority    @default(MEDIUM)
+  image       String
+  description String      @db.Text
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  // Manager of this project
+  projectManager   User?   @relation("ProjectManager", fields: [projectManagerId], references: [id], onDelete: Cascade)
+  projectManagerId String?
+
+  // Members of this project
+  members ProjectMember[]
+
+  @@map("projects")
+}
+
+// Join table for many-to-many relation between Users and Projects
+
+model ProjectMember {
+  id        String   @id @default(cuid())
+  project   Project  @relation(fields: [projectId], references: [id])
+  projectId String
+  user      User     @relation(fields: [userId], references: [id])
+  userId    String
+
+  joinedAt  DateTime @default(now())
 }
