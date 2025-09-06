@@ -1,3 +1,4 @@
+// frontend/src/App.jsx
 import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
@@ -35,7 +36,7 @@ function App() {
             element={
               <ProtectedRoute allowedRoles={['PROJECT_MANAGER', 'PROJECT_MEMBER']}>
                 <ProjectList />
-              </ProtectedRoute>
+              </ProtectedRoute> 
             }
           />
           <Route
