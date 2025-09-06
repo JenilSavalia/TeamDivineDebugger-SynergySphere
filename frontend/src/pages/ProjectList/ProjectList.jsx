@@ -1,5 +1,4 @@
-// frontend/src/pages/ProjectList/ProjectList.jsx
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import {
   Menu,
   Grid3X3,
@@ -24,6 +23,7 @@ import {
   Sun, Moon,
   Upload
 } from 'lucide-react';
+import { Link } from 'react-router-dom';
 
 const ProjectList = () => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
@@ -38,6 +38,10 @@ const ProjectList = () => {
     recent: true,
     starred: false
   });
+  const [searchQuery, setSearchQuery] = useState('');
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const [selectedProject, setSelectedProject] = useState(null);
+  const searchRef = useRef(null);
 
   // Check if mobile on mount and window resize
   useEffect(() => {
@@ -52,6 +56,18 @@ const ProjectList = () => {
     checkIsMobile();
     window.addEventListener('resize', checkIsMobile);
     return () => window.removeEventListener('resize', checkIsMobile);
+  }, []);
+
+  // Handle clicks outside the search bar to close suggestions
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (searchRef.current && !searchRef.current.contains(event.target)) {
+        setShowSuggestions(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   const toggleSection = (section) => {
@@ -91,6 +107,33 @@ const ProjectList = () => {
       doneItems: 4,
     },
   ];
+
+  // Filter projects for suggestions based on search query
+  const filteredSuggestions = projects.filter(project =>
+    project.title.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  // Filter projects for display based on selected project
+  const filteredProjects = selectedProject
+    ? projects.filter(project => project.title === selectedProject)
+    : projects;
+
+  // Handle suggestion selection
+  const handleSelectSuggestion = (title) => {
+    setSearchQuery(title);
+    setSelectedProject(title);
+    setShowSuggestions(false);
+  };
+
+  // Handle input change
+  const handleSearchChange = (e) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    setShowSuggestions(value.length > 0);
+    if (!value) {
+      setSelectedProject(null);
+    }
+  };
 
   // ---------------- Notification Panel ----------------
   const NotificationPanel = () => {
@@ -291,8 +334,8 @@ const ProjectList = () => {
       <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div
           className={`bg-white rounded-lg shadow-xl ${modalMaximized || isMobile
-              ? 'w-full h-full'
-              : 'w-full max-w-4xl max-h-[90vh]'
+            ? 'w-full h-full'
+            : 'w-full max-w-4xl max-h-[90vh]'
             } overflow-hidden`}
         >
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
@@ -527,8 +570,8 @@ const ProjectList = () => {
     return (
       <div className="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-4">
         <div className={`bg-white rounded-lg shadow-xl ${modalMaximized || isMobile
-            ? 'w-full h-full'
-            : 'w-full max-w-2xl max-h-[90vh]'
+          ? 'w-full h-full'
+          : 'w-full max-w-2xl max-h-[90vh]'
           } overflow-hidden`}>
           <div className="flex items-center justify-between p-4 border-b border-gray-200">
             <div className="flex items-center gap-2">
@@ -695,8 +738,8 @@ const ProjectList = () => {
 
       {/* Sidebar */}
       <div className={`${isMobile
-          ? `fixed left-0 top-0 h-full z-50 transform transition-transform ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} w-64`
-          : sidebarCollapsed ? 'w-16' : 'w-64'
+        ? `fixed left-0 top-0 h-full z-50 transform transition-transform ${mobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} w-64`
+        : sidebarCollapsed ? 'w-16' : 'w-64'
         } bg-white border-r transition-all duration-300 flex flex-col border-gray-200`}>
         <div className="flex items-center justify-between p-4 border-b border-gray-200">
           {(!sidebarCollapsed || isMobile) && (
@@ -809,11 +852,6 @@ const ProjectList = () => {
                 </div>
 
                 <div className="flex items-center gap-2">
-                  {/* Search button */}
-                  <button className="p-2 hover:bg-gray-100 rounded">
-                    <Search className="w-5 h-5" />
-                  </button>
-
                   {/* Notification button */}
                   <div className="relative">
                     <button
@@ -889,22 +927,48 @@ const ProjectList = () => {
                 </div>
               </div>
 
-              {/* Bottom row - Create buttons */}
-              <div className="flex gap-3">
-                <button
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
-                  onClick={() => setCreateProjectModalOpen(true)}
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Project</span>
-                </button>
-                <button
-                  className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
-                  onClick={() => setCreateTaskModalOpen(true)}
-                >
-                  <Plus className="w-4 h-4" />
-                  <span>Task</span>
-                </button>
+              {/* Bottom row - Search input with suggestions and Create buttons */}
+              <div className="flex flex-col gap-3">
+                <div className="relative" ref={searchRef}>
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search projects..."
+                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    value={searchQuery}
+                    onChange={handleSearchChange}
+                    onFocus={() => setShowSuggestions(searchQuery.length > 0)}
+                  />
+                  {showSuggestions && filteredSuggestions.length > 0 && (
+                    <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg z-50 mt-1 max-h-60 overflow-y-auto">
+                      {filteredSuggestions.map((project) => (
+                        <button
+                          key={project.id}
+                          className="w-full text-left px-4 py-2 text-sm hover:bg-blue-50 text-gray-700"
+                          onClick={() => handleSelectSuggestion(project.title)}
+                        >
+                          {project.title}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+                    onClick={() => setCreateProjectModalOpen(true)}
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Project</span>
+                  </button>
+                  <button
+                    className="flex-1 flex items-center justify-center gap-2 px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 text-sm"
+                    onClick={() => setCreateTaskModalOpen(true)}
+                  >
+                    <Plus className="w-4 h-4" />
+                    <span>Task</span>
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
@@ -917,16 +981,30 @@ const ProjectList = () => {
                 <span className="font-semibold text-blue-600">SynergySphere</span>
               </div>
 
-              {/* Search - Hidden on mobile, shown on tablet+ */}
-              <div className="flex-1 max-w-md mx-4 sm:mx-8">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
-                  <input
-                    type="text"
-                    placeholder="Search"
-                    className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
-                  />
-                </div>
+              {/* Search with Suggestions */}
+              <div className="flex-1 max-w-md mx-4 sm:mx-8 relative" ref={searchRef}>
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <input
+                  type="text"
+                  placeholder="Search projects..."
+                  className="w-full pl-10 pr-4 py-2 border border-gray-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  value={searchQuery}
+                  onChange={handleSearchChange}
+                  onFocus={() => setShowSuggestions(searchQuery.length > 0)}
+                />
+                {showSuggestions && filteredSuggestions.length > 0 && (
+                  <div className="absolute top-full left-0 right-0 bg-white border border-gray-200 rounded-md shadow-lg z-50 mt-1 max-h-60 overflow-y-auto">
+                    {filteredSuggestions.map((project) => (
+                      <button
+                        key={project.id}
+                        className="w-full text-left px-4 py-2 text-sm hover:bg-blue-50 text-gray-700"
+                        onClick={() => handleSelectSuggestion(project.title)}
+                      >
+                        {project.title}
+                      </button>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div className="flex items-center gap-2">
@@ -1038,44 +1116,51 @@ const ProjectList = () => {
 
               {/* Responsive Grid */}
               <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-6">
-                {projects.map((project) => (
-                  <div
-                    key={project.id}
-                    className="bg-white rounded-lg border p-4 sm:p-6 border-gray-200 hover:shadow-md transition-shadow"
-                  >
-                    <div className="flex items-start gap-3 sm:gap-4">
-                      <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-500 rounded flex items-center justify-center flex-shrink-0">
-                        <div className="w-5 h-5 sm:w-6 sm:h-6 bg-white rounded flex items-center justify-center">
-                          <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-red-500 rounded"></div>
-                        </div>
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="font-medium mb-1 text-sm sm:text-base truncate">{project.title}</h3>
-                        <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">{project.type}</p>
-
-                        <div className="mb-3 sm:mb-4">
-                          <h4 className="text-xs sm:text-sm font-medium text-gray-700 mb-2">
-                            Quick links
-                          </h4>
-                          <div className="space-y-1">
-                            <div className="flex items-center justify-between text-xs sm:text-sm">
-                              <span className="truncate pr-2">My open work items</span>
-                              <span className="text-gray-500 flex-shrink-0">{project.openItems}</span>
+                {filteredProjects.length > 0 ? (
+                  filteredProjects.map((project) => (
+                    <Link to={`/dashboard/${project.id}`} key={project.id}>
+                      <div
+                        className="bg-white rounded-lg border p-4 sm:p-6 h-full border-gray-200 hover:shadow-md transition-shadow"
+                      >
+                        <div className="flex items-start gap-3 sm:gap-4">
+                          <div className="w-10 h-10 sm:w-12 sm:h-12 bg-red-500 rounded flex items-center justify-center flex-shrink-0">
+                            <div className="w-5 h-5 sm:w-6 sm:h-6 bg-white rounded flex items-center justify-center">
+                              <div className="w-2.5 h-2.5 sm:w-3 sm:h-3 bg-red-500 rounded"></div>
                             </div>
-                            <div className="text-xs sm:text-sm text-gray-600">
-                              Done work items: {project.doneItems}
+                          </div>
+                          <div className="flex-1 min-w-0">
+                            <h3 className="font-medium mb-1 text-sm sm:text-base truncate">{project.title}</h3>
+                            <p className="text-xs sm:text-sm text-gray-600 mb-3 sm:mb-4">{project.type}</p>
+
+                            <div className="mb-3 sm:mb-4">
+                              <h4 className="text-xs sm:text-sm font-medium text-gray-700 mb-2">
+                                Quick links
+                              </h4>
+                              <div className="space-y-1">
+                                <div className="flex items-center justify-between text-xs sm:text-sm">
+                                  <span className="truncate pr-2">My open work items</span>
+                                  <span className="text-gray-500 flex-shrink-0">{project.openItems}</span>
+                                </div>
+                                <div className="text-xs sm:text-sm text-gray-600">
+                                  Done work items: {project.doneItems}
+                                </div>
+                              </div>
+                            </div>
+
+                            <div className="flex items-center gap-2">
+                              <span className="text-xs sm:text-sm">1 board</span>
+                              <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
                             </div>
                           </div>
                         </div>
-
-                        <div className="flex items-center gap-2">
-                          <span className="text-xs sm:text-sm">1 board</span>
-                          <ChevronDown className="w-3 h-3 sm:w-4 sm:h-4" />
-                        </div>
                       </div>
-                    </div>
+                    </Link>
+                  ))
+                ) : (
+                  <div className="col-span-full text-center text-gray-500 py-8">
+                    No projects found.
                   </div>
-                ))}
+                )}
               </div>
             </div>
           </div>
