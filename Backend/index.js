@@ -1,32 +1,24 @@
-// import express from 'express';
-// import cors from 'cors';
-// import dotenv from 'dotenv';
-// import authRoutes from './routes/auth.routes.js';
+import express from 'express';
+import cors from 'cors';
+import dotenv from 'dotenv';
+import authRoutes from './routes/auth.routes.js';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
+import projectRoutes from './routes/projectRoute.js';
+import { errorHandler, notFound } from './middleware/errorMiddleware.js';
 
-// dotenv.config();
-
-// const app = express();
-// app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
-// app.use(express.json());
-
-
- // app.use('/api/auth', authRoutes);
-
-// const PORT = process.env.PORT || 5000;
-// app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
-
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
-require('dotenv').config();
-
-const projectRoutes = require('./routes/projectRoutes');
-const { errorHandler, notFound } = require('./middleware/errorMiddleware');
+dotenv.config();
 
 const app = express();
+app.use(cors({ origin: 'http://localhost:5173', credentials: true }));
+app.use(express.json());
+
+
+app.use('/api/auth', authRoutes);
+
 const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
 
 // Security Middleware
 app.use(helmet());
@@ -59,8 +51,8 @@ app.use('/api/projects', projectRoutes);
 
 // Health Check
 app.get('/api/health', (req, res) => {
-  res.status(200).json({ 
-    status: 'OK', 
+  res.status(200).json({
+    status: 'OK',
     message: 'SynergySphere API is running',
     timestamp: new Date().toISOString()
   });

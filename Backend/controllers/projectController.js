@@ -1,10 +1,11 @@
-const { PrismaClient } = require('@prisma/client');
+import { PrismaClient } from '@prisma/client';
+
 const prisma = new PrismaClient();
 
 // @desc    Create new project
 // @route   POST /api/projects
 // @access  Public
-const createProject = async (req, res) => {
+export const createProject = async (req, res) => {
   try {
     const { name, tags, projectManagerId, deadline, priority, description } = req.validatedData;
     
@@ -72,7 +73,7 @@ const createProject = async (req, res) => {
 // @desc    Get all projects
 // @route   GET /api/projects
 // @access  Public
-const getAllProjects = async (req, res) => {
+export const getAllProjects = async (req, res) => {
   try {
     const projects = await prisma.project.findMany({
       include: {
@@ -108,7 +109,7 @@ const getAllProjects = async (req, res) => {
 // @desc    Get project by ID
 // @route   GET /api/projects/:id
 // @access  Public
-const getProjectById = async (req, res) => {
+export const getProjectById = async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -145,10 +146,4 @@ const getProjectById = async (req, res) => {
       message: 'Failed to retrieve project'
     });
   }
-};
-
-module.exports = {
-  createProject,
-  getAllProjects,
-  getProjectById
 };

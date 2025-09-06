@@ -1,7 +1,8 @@
-const multer = require('multer');
-const path = require('path');
-const fs = require('fs');
+import multer from 'multer'; 
 
+import path from 'path'; 
+
+import fs from 'fs';
 // Ensure uploads directory exists
 const uploadsDir = './uploads/projects';
 if (!fs.existsSync(uploadsDir)) {
@@ -30,12 +31,10 @@ const fileFilter = (req, file, cb) => {
   }
 };
 
-const upload = multer({
+export const upload = multer({
   storage,
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
   fileFilter
 });
-
-module.exports = upload;

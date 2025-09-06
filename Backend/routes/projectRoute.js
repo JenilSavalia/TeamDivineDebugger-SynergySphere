@@ -1,7 +1,7 @@
-const express = require('express');
-const { createProject, getAllProjects, getProjectById } = require('../controllers/projectController');
-const { validateProject } = require('../middleware/validation');
-const upload = require('../middleware/upload');
+import express from 'express';
+import { createProject, getAllProjects, getProjectById } from '../controllers/projectController.js';
+import { validateProject } from '../middleware/validation.js';
+import { upload } from '../middleware/upload.js';
 
 const router = express.Router();
 
@@ -20,4 +20,4 @@ router.get('/', getAllProjects);
 // @access  Public
 router.get('/:id', getProjectById);
 
-module.exports = router;
+export default router;

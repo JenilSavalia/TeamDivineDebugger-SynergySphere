@@ -1,4 +1,4 @@
-const Joi = require('joi');
+import Joi from "joi";
 
 const projectValidationSchema = Joi.object({
   name: Joi.string()
@@ -65,7 +65,7 @@ const projectValidationSchema = Joi.object({
     })
 });
 
-const validateProject = (req, res, next) => {
+export const validateProject = (req, res, next) => {
   const { error, value } = projectValidationSchema.validate(req.body, {
     abortEarly: false,
     stripUnknown: true
@@ -87,5 +87,3 @@ const validateProject = (req, res, next) => {
   req.validatedData = value;
   next();
 };
-
-module.exports = { validateProject };
