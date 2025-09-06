@@ -30,10 +30,14 @@ const ProjectList = () => {
   const [profileMenuOpen, setProfileMenuOpen] = useState(false);
   const [createTaskModalOpen, setCreateTaskModalOpen] = useState(false);
   const [createProjectModalOpen, setCreateProjectModalOpen] = useState(false);
+  const [notificationOpen, setNotificationOpen] = useState(false);
+  const [onlyUnread, setOnlyUnread] = useState(false);
   const [expandedSections, setExpandedSections] = useState({
     recent: true,
     starred: false
   });
+
+
 
   const toggleSection = (section) => {
     setExpandedSections(prev => ({
@@ -72,6 +76,176 @@ const ProjectList = () => {
     },
   ];
 
+  const notifications = [
+    {
+      id: 1,
+      user: "Spencer Lasley",
+      date: "2 weeks ago",
+      title: "8.26.2025 Agenda",
+      project: "BB2025-57 · In Progress",
+      mention:
+        "@Olga V. Mack @mamay nakhashi @Kalpesh Senva @Dhairya Chawda @Jenil Savalia @parth – I’ll be creating agendas here…",
+    },
+    {
+      id: 2,
+      user: "Spencer Lasley",
+      date: "1 week ago",
+      title: "8.28.2025 Agenda",
+      project: "BB2025-58 · To Do",
+      mention:
+        "@Olga V. Mack @mamay nakhashi @Kalpesh Senva @Jenil Savalia @Dhairya Chawda see above for the agenda for the call…",
+    },
+  ];
+  // ---------------- Notification Panel ----------------
+  const NotificationPanel = () => {
+    if (!notificationOpen) return null;
+
+    // Dummy notifications (safe fake data)
+    const notifications = [
+      {
+        id: 1,
+        user: "Alex Carter",
+        avatar: "", // leave empty for initials
+        date: "2 weeks ago",
+        title: "Q3 Planning Agenda",
+        project: "ACME-57 · In Progress",
+        mention:
+          "@Jamie Brooks @Taylor Morgan – I’ll be creating agendas here for our weekly syncs.",
+        unread: true,
+      },
+      {
+        id: 2,
+        user: "Jamie Brooks",
+        avatar: "",
+        date: "1 week ago",
+        title: "Sprint Retrospective",
+        project: "ACME-58 · To Do",
+        mention:
+          "@Alex Carter @Taylor Morgan please check the updated notes for this sprint’s retrospective.",
+        unread: false,
+      },
+    ];
+
+    const filtered = onlyUnread
+      ? notifications.filter((n) => n.unread)
+      : notifications;
+
+    // Helper: render avatar like Gmail
+    const Avatar = ({ name, avatar }) => {
+      if (avatar) {
+        return (
+          <img
+            src={avatar}
+            alt={name}
+            className="w-8 h-8 rounded-full object-cover"
+          />
+        );
+      }
+      // initials
+      const initials = name
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase();
+      return (
+        <div className="w-8 h-8 rounded-full flex items-center justify-center bg-blue-500 text-white text-sm font-medium">
+          {initials}
+        </div>
+      );
+    };
+
+    return (
+      <div className="absolute top-14 right-4 w-[420px] h-[80vh] bg-white shadow-xl border rounded-lg flex flex-col z-50 border-gray-200">
+        {/* Header */}
+        <div className="flex items-center justify-between p-3 border-b border-gray-200">
+          <h2 className="text-lg font-medium">Notifications</h2>
+          <button
+            onClick={() => setNotificationOpen(false)}
+            className="p-1 hover:bg-gray-100 rounded"
+          >
+            ✕
+          </button>
+        </div>
+
+        {/* Tabs + Unread Toggle */}
+        <div className="flex items-center justify-between border-b px-3 border-gray-200">
+          <div className="flex">
+            <button className="px-3 py-2 text-sm font-medium text-blue-600 border-b-2 border-blue-600 border-b-blue-600">
+              Direct
+            </button>
+            <button className="px-3 py-2 text-sm text-gray-600 hover:text-gray-900">
+              Watching
+            </button>
+          </div>
+          <div className="flex items-center gap-2 text-sm text-gray-600">
+            <span>Only show unread</span>
+            <button
+              onClick={() => setOnlyUnread(!onlyUnread)}
+              className={`w-10 h-5 flex items-center rounded-full ${onlyUnread ? "bg-blue-600" : "bg-gray-300"
+                }`}
+            >
+              <div
+                className={`w-4 h-4 bg-white rounded-full shadow transform transition ${onlyUnread ? "translate-x-5" : "translate-x-1"
+                  }`}
+              />
+            </button>
+          </div>
+        </div>
+
+        {/* Slack Banner */}
+        <div className="p-4 border-b border-gray-200">
+          <p className="text-sm text-gray-700 mb-2">
+            Get instant updates in Slack
+          </p>
+          <button className="text-blue-600 hover:underline text-sm">
+            Connect to Slack
+          </button>
+        </div>
+
+        {/* Notifications List */}
+        <div className="flex-1 overflow-y-auto">
+          {filtered.map((n) => (
+            <div
+              key={n.id}
+              className="p-4 border-b hover:bg-gray-50 transition relative flex gap-3 border-gray-200"
+            >
+              {/* Avatar */}
+              <Avatar name={n.user} avatar={n.avatar} />
+
+              {/* Notification Content */}
+              <div className="flex-1">
+                <div className="flex items-center justify-between">
+                  <p className="text-sm font-medium">
+                    {n.user}{" "}
+                    <span className="text-gray-500">mentioned you</span>
+                  </p>
+                  {n.unread && (
+                    <span className="w-2 h-2 bg-blue-600 rounded-full" />
+                  )}
+                </div>
+                <p className="text-xs text-gray-500">{n.date}</p>
+
+                <p className="text-sm mt-1 font-medium">{n.title}</p>
+                <p className="text-xs text-gray-500">{n.project}</p>
+
+                <p className="text-sm text-gray-700 mt-2 line-clamp-2">
+                  {n.mention}
+                </p>
+
+                <div className="flex gap-4 mt-2 text-xs text-blue-600">
+                  <button>Reply</button>
+                  <button>View thread</button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    );
+  };
+
+
+
   const CreateProjectModal = () => {
     const [modalMaximized, setModalMaximized] = useState(false);
 
@@ -85,6 +259,7 @@ const ProjectList = () => {
     const [projectImage, setProjectImage] = useState(null);
     const [projectImagePreview, setProjectImagePreview] = useState(null);
     const [createAnother, setCreateAnother] = useState(false);
+
 
 
     // limits and options
@@ -309,9 +484,9 @@ const ProjectList = () => {
                   onChange={handleDescriptionChange}
                 />
                 <div className="mt-1 text-xs">
-<span className={descCount > descCharLimit ? 'text-red-500' : 'text-gray-500'}>
-  {descCount}/{descCharLimit} characters
-</span>
+                  <span className={descCount > descCharLimit ? 'text-red-500' : 'text-gray-500'}>
+                    {descCount}/{descCharLimit} characters
+                  </span>
 
                 </div>
               </div>
@@ -381,6 +556,7 @@ const ProjectList = () => {
       </div>
     );
   };
+
 
 
   const CreateTaskModal = () => {
@@ -681,20 +857,17 @@ const ProjectList = () => {
               </button>
 
               <div className="relative">
-                <button className="p-2 hover:bg-gray-100 rounded relative">
+                <button
+                  onClick={() => setNotificationOpen(!notificationOpen)}
+                  className="p-2 hover:bg-gray-100 rounded relative"
+                >
                   <Bell className="w-5 h-5" />
-                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">2</span>
+                  <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                    2
+                  </span>
                 </button>
               </div>
-
-              <button className="p-2 hover:bg-gray-100 rounded">
-                <HelpCircle className="w-5 h-5" />
-              </button>
-
-              <button className="p-2 hover:bg-gray-100 rounded">
-                <Settings className="w-5 h-5" />
-              </button>
-
+              
               {/* Profile Menu */}
               <div className="relative">
                 <button
@@ -845,6 +1018,8 @@ const ProjectList = () => {
       {/* Create Task Modal */}
       <CreateProjectModal />
       <CreateTaskModal />
+      {notificationOpen && <NotificationPanel />}
+
 
       {/* Click outside to close profile menu */}
       {profileMenuOpen && (
